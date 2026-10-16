@@ -65,7 +65,7 @@ Celestial.display = function(config) {
   
   mapProjection = Celestial.projection(cfg.projection).rotate(rotation).translate([canvaswidth/2, canvasheight/2]).scale(scale * zoomlevel);
     
-  zoom = d3.geo.zoom().projection(mapProjection).center([canvaswidth/2, canvasheight/2]).scaleExtent([scale, scale * zoomextent]).on("zoom.redraw", redraw);
+  zoom = d3.geo.zoom().projection(mapProjection).center([canvaswidth/2, canvasheight/2]).scaleExtent([scale, scale * zoomextent]).on("zoom.redraw", requestRedraw);
   // Set initial zoom level
   scale *= zoomlevel;
 
@@ -449,6 +449,29 @@ Celestial.display = function(config) {
   }
 
   
+  var redrawPending = false;
+  // Throttle interactive redraws to one per animation frame - prevents
+  // browser freezing/lag during zooming and dragging
+  function requestRedraw() {
+    if (redrawPending) return;
+    redrawPending = true;
+    requestAnimationFrame(function() {
+      redrawPending = false;
+      redraw();
+    });
+  }
+
+  function hexToRgba(c, a) {
+    if (!c || c.charAt(0) !== "#") return c;
+    var r, g, b;
+    if (c.length === 4) {
+      r = parseInt(c[1] + c[1], 16); g = parseInt(c[2] + c[2], 16); b = parseInt(c[3] + c[3], 16);
+    } else if (c.length >= 7) {
+      r = parseInt(c.substr(1, 2), 16); g = parseInt(c.substr(3, 2), 16); b = parseInt(c.substr(5, 2), 16);
+    } else return c;
+    return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+  }
+
   function redraw() {  
     var rot = mapProjection.rotate();
     
@@ -460,7 +483,7 @@ Celestial.display = function(config) {
     dsobase = cfg.dsos.size || starbase;
     dsoexp = cfg.dsos.exponent;
     
-    if (cfg.orientationfixed && cfg.center.length > 2) {
+    if (cfg.orientationfixed && isArray(cfg.center) && cfg.center.length > 2) {
       rot[2] = cfg.center[2]; 
       mapProjection.rotate(rot);
     }
@@ -548,25 +571,42 @@ Celestial.display = function(config) {
     }
       
 
-    if (cfg.stars.show) { 
+    if (cfg.stars.show) {
       setStyle(cfg.stars.style);
+      // Two-pass rendering: first all star discs (bright stars are never
+      // overdrawn by faint ones), then all labels on top
+      var labelled = [];
       container.selectAll(parentElement + " .star").each(function(d) {
         if (clip(d.geometry.coordinates) && d.properties.mag <= cfg.stars.limit) {
           var pt = mapProjection(d.geometry.coordinates),
               r = starSize(d);
-          context.fillStyle = starColor(d); 
+          if (!pt || !isFinite(pt[0]) || !isFinite(pt[1])) return;
+          context.fillStyle = starColor(d);
+          context.globalAlpha = starOpacity(d);
           context.beginPath();
           context.arc(pt[0], pt[1], r, 0, 2 * Math.PI);
           context.closePath();
           context.fill();
-          if (cfg.stars.designation && d.properties.mag <= cfg.stars.designationLimit*adapt) {
-            setTextStyle(cfg.stars.designationStyle);
-            context.fillText(starDesignation(d.id), pt[0]+r, pt[1]);
+          // Soft luminous halo around brighter stars
+          if (cfg.stars.glow !== false && r >= 1.15) {
+            drawStarGlow(pt, r, context.fillStyle);
           }
-          if (cfg.stars.propername && d.properties.mag <= cfg.stars.propernameLimit*adapt) {
-            setTextStyle(cfg.stars.propernameStyle);
-            context.fillText(starPropername(d.id), pt[0]-r, pt[1]);
+          if ((cfg.stars.designation && d.properties.mag <= cfg.stars.designationLimit*adapt) ||
+              (cfg.stars.propername && d.properties.mag <= cfg.stars.propernameLimit*adapt)) {
+            labelled.push([d, pt, r]);
           }
+        }
+      });
+      context.globalAlpha = 1;
+      labelled.forEach(function(s) {
+        var d = s[0], pt = s[1], r = s[2];
+        if (cfg.stars.designation && d.properties.mag <= cfg.stars.designationLimit*adapt) {
+          setTextStyle(cfg.stars.designationStyle);
+          context.fillText(starDesignation(d.id), pt[0]+r, pt[1]);
+        }
+        if (cfg.stars.propername && d.properties.mag <= cfg.stars.propernameLimit*adapt) {
+          setTextStyle(cfg.stars.propernameStyle);
+          context.fillText(starPropername(d.id), pt[0]-r, pt[1]);
         }
       });
     }
@@ -845,6 +885,31 @@ Celestial.display = function(config) {
     if (!cfg.stars.colors || isNaN(bv)) {return cfg.stars.style.fill; }
     return bvcolor(bv);
   }
+
+  // Brighter stars appear more opaque - adds visual depth/brightness contrast
+  function starOpacity(d) {
+    var base = isNumber(cfg.stars.style.opacity) ? cfg.stars.style.opacity : 1,
+        mag = d.properties.mag;
+    if (!isNumber(mag)) return base;
+    var f = Math.exp(-0.28 * Math.max(mag, -1.5));
+    return Math.max(0.35, Math.min(1, base * (0.45 + 0.55 * f)));
+  }
+
+  // Radial gradient halo to make stars look luminous instead of flat dots
+  function drawStarGlow(pt, r, color) {
+    var g = isNumber(cfg.stars.glowSize) ? cfg.stars.glowSize : 2.6,
+        gr = Math.min(r * g, 40);
+    var grad = context.createRadialGradient(pt[0], pt[1], r * 0.4, pt[0], pt[1], gr);
+    grad.addColorStop(0, hexToRgba(color, 0.5));
+    grad.addColorStop(0.35, hexToRgba(color, 0.2));
+    grad.addColorStop(1, hexToRgba(color, 0));
+    context.fillStyle = grad;
+    context.beginPath();
+    context.arc(pt[0], pt[1], gr, 0, 2 * Math.PI);
+    context.closePath();
+    context.fill();
+    context.fillStyle = color;
+  }
   
   function constName(d) { 
     return d.properties[cfg.constellations.namesType]; 
@@ -942,7 +1007,16 @@ Celestial.display = function(config) {
   };
   this.symbol = Canvas.symbol;
   this.dsoSymbol = dsoSymbol;
-  this.redraw = redraw; 
+  this.redraw = redraw;
+  this.capture = function(type, quality) {
+    type = type || "image/png";
+    quality = isNumber(quality) ? quality : 1;
+    var nowPending = redrawPending;
+    if (nowPending) { redrawPending = false; redraw(); }
+    var url = canvas.node().toDataURL(type, quality);
+    if (nowPending) { redrawPending = true; }
+    return url;
+  }; 
   this.resize = function(config) { 
     if (config !== undefined) {  
       if (has(config, "width")) cfg.width = config.width; 
