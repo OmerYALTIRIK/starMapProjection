@@ -77,6 +77,10 @@
       container: "celestial-map",
       form: true,
       // Parlak, gerçekçi yıldızlar (glow efekti) - src/config.js içinde varsayılan açık
+      // Sadece gerekli veri dosyalarını yükle: büyük katalogları (stars.8/14) atla -> hızlı açılış, donma yok
+      stars:  { data: "stars.6.json" },
+      dsos:   { data: "dsos.bright.json" },
+      constellations: { namesType: "ltn" },
     };
 
     Celestial.display(config);
