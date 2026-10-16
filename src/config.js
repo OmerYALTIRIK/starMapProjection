@@ -22,7 +22,7 @@ var settings = {
   form: false,        // Display settings form
   location: false,    // Display location settings, deprecated, use formFields
   // Set visiblity for each group of fields of the form
-  formFields: {"location": true, "general": true, "stars": true, "dsos": true, "constellations": true, "lines": true, "other": true, download: false},
+  formFields: {"location": true, "general": true, "stars": true, "dsos": true, "constellations": true, "lines": true, "other": true, download: true},
   advanced: true,     // Display fewer form fields if false
   daterange: [],      // Calender date range; null: displaydate-+10; [n<100]: displaydate-+n; [yr]: yr-+10; 
                       // [yr, n<100]: [yr-n, yr+n]; [yr0, yr1]
@@ -39,6 +39,8 @@ var settings = {
     limit: 6,      // Show only stars brighter than limit magnitude
     colors: true,  // Show stars in spectral colors, if not use fill-style
     style: { fill: "#ffffff", opacity: 1 }, // Default style for stars
+    glow: true,      // Draw a soft luminous halo around brighter stars
+    glowSize: 2.6,   // Halo radius as multiple of the star disc radius
     designation: true, // Show star names (Bayer, Flamsteed, Variable star, Gliese or designation, 
                        // i.e. whichever of the previous applies first); may vary with culture setting
     designationType: "desig",  // Which kind of name is displayed as designation (fieldname in starnames.json)

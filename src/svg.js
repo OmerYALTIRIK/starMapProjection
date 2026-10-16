@@ -1,4 +1,4 @@
-/* global d3, Celestial, projections, poles, getData, getPlanet, getMwbackground, getAngles, getWidth, getGridValues, has, isArray, halfπ, symbols, starnames, dsonames, bvcolor, settings, formats, transformDeg, euler, Round */
+/* global d3, Celestial, projections, poles, getData, getPlanet, getMwbackground, getAngles, getWidth, getGridValues, has, isArray, isNumber, halfπ, symbols, starnames, dsonames, bvcolor, settings, formats, transformDeg, euler, Round */
 function exportSVG(fname) {
   var doc = d3.select("body").append("div").attr("id", "d3-celestial-svg").attr("style", "display: none"),
       svg = d3.select("#d3-celestial-svg").append("svg"), //.attr("style", "display: none"),
@@ -237,10 +237,40 @@ function exportSVG(fname) {
 
         var cons = getData(json, cfg.transform);
         
+        var starList = cons.features.filter( function(d) {
+            return d.properties.mag <= cfg.stars.limit;
+          }).slice().sort(function(a, b) {
+            return b.properties.mag - a.properties.mag;  // faint first, bright on top
+          });
+
+        if (cfg.stars.glow !== false) {
+          var glowDefs = defs.append("g").attr("id", "starGlow"),
+              seenGlow = {};
+          starList.forEach(function(d) {
+            var r = starSize(d.properties.mag);
+            if (r < 1.15) return;
+            var c = (cfg.stars.colors && isFinite(d.properties.bv)) ? bvcolor(d.properties.bv) : cfg.stars.style.fill,
+                key = c.replace("#", "");
+            if (!seenGlow[key]) {
+              seenGlow[key] = true;
+              var rg = glowDefs.append("radialGradient")
+                .attr("id", "starglow" + key)
+                .attr("cx", "50%").attr("cy", "50%").attr("r", "50%");
+              rg.append("stop").attr("offset", "0%").attr("stop-color", c).attr("stop-opacity", 0.5);
+              rg.append("stop").attr("offset", "35%").attr("stop-color", c).attr("stop-opacity", 0.2);
+              rg.append("stop").attr("offset", "100%").attr("stop-color", c).attr("stop-opacity", 0);
+            }
+            var gr = Math.min(r * (isNumber(cfg.stars.glowSize) ? cfg.stars.glowSize : 2.6), 40),
+                gp = point(d.geometry.coordinates);
+            groups.stars.append("circle")
+              .attr("class", "starglow")
+              .attr("cx", gp[0]).attr("cy", gp[1]).attr("r", gr)
+              .attr("fill", "url(#starglow" + key + ")");
+          });
+        }
+
         groups.stars.selectAll(".stars")
-          .data(cons.features.filter( function(d) {
-            return d.properties.mag <= cfg.stars.limit; 
-          }))
+          .data(starList)
           .enter().append("path")
           .attr("class", function(d) { return "stars" + starColor(d.properties.bv); })
           .attr("d", map.pointRadius( function(d) {
