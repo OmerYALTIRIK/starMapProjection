@@ -21,8 +21,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<string>(
     isPaid
-      ? 'Önceden ödeme yaptınız, yüksek çözünürlüklü posterinizi doğrudan indirebilirsiniz.'
-      : 'İndirmek için önce ödemeyi tamamlayın.'
+      ? 'Önceden ödeme yaptınız, tüm dijital formatları (300 DPI PNG + SVG) doğrudan indirebilirsiniz.'
+      : 'Dijital ürünleri (300 DPI Baskı + SVG) indirmek için 250 TL ödemeyi tamamlayın.'
   );
   const [isError, setIsError] = useState(false);
   const [pendingCode, setPendingCode] = useState<string | null>(null);
@@ -35,14 +35,14 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
   const handleSimulatePayment = () => {
     setLoading(true);
     setIsError(false);
-    setStatus('Ödeme alınıyor… lütfen bekleyin');
+    setStatus('250 TL ödeme alınıyor… lütfen bekleyin');
 
     setTimeout(() => {
       setLoading(false);
       const code = 'SKY-' + Math.random().toString(36).slice(2, 8).toUpperCase();
       setPendingCode(code);
-      setCodeInput(code); // User-friendly auto-fill as in original
-      setStatus('Ödemeniz alındı. İndirme kodunuz: ' + code + ' — aşağıya otomatik eklendi.');
+      setCodeInput(code);
+      setStatus('₺250,00 ödemeniz alındı. Dijital indirme kodunuz: ' + code + ' — aşağıya otomatik eklendi.');
     }, 800);
   };
 
@@ -59,7 +59,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     }
 
     setDownloading(true);
-    setStatus('Yüksek çözünürlüklü dosya hazırlanıyor…');
+    setStatus('Yüksek çözünürlüklü dijital dosya hazırlanıyor…');
 
     try {
       const fileNameDate = poster.date || new Date().toISOString().slice(0, 10);
@@ -70,11 +70,9 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         triggerDownload(url, `yildiz-haritasi-posteri-${fileNameDate}.png`);
         setTimeout(() => URL.revokeObjectURL(url), 5000);
       } else if (downloadFormat === 'svg') {
-        // SVG Vector export via celestial.js
         if ((window as any).Celestial && typeof (window as any).Celestial.exportSVG === 'function') {
           (window as any).Celestial.exportSVG(`gokyuzu-haritasi-${fileNameDate}.svg`);
         } else {
-          // Fallback to SVG node if exists
           const svgNode = document.querySelector('#celestial-map svg');
           if (svgNode) {
             const xml = new XMLSerializer().serializeToString(svgNode);
@@ -89,7 +87,6 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
           }
         }
       } else {
-        // Sadece gökyüzü haritası canvas'ı
         const canvas = document.querySelector('#celestial-map canvas') as HTMLCanvasElement | null;
         if (canvas) {
           const url = canvas.toDataURL('image/png');
@@ -134,23 +131,21 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         </button>
 
         {/* Modal Header */}
-        <div className="flex items-center gap-2.5 mb-2">
-          <div className="w-8 h-8 rounded-lg bg-amber-400/20 border border-amber-400/40 flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-amber-300" />
-          </div>
+        <div className="flex items-center justify-between pr-8 mb-2">
           <h3 className="font-cinzel text-lg sm:text-xl font-bold text-amber-300">
-            Harita Çıktısını İndir
+            Dijital Poster Paketini İndir
           </h3>
+          <span className="text-sm font-bold text-amber-300 tabular-nums">₺250,00</span>
         </div>
 
         <p className="text-xs sm:text-sm leading-relaxed text-[#b9c2dd] mb-4">
-          Seçtiğiniz tarih ve açılar için oluşturulan yüksek çözünürlüklü gökyüzü haritası çıktısı ücrete tabidir.
+          Seçtiğiniz tarih, konum ve kişisel mesajınızla oluşturulan yüksek çözünürlüklü (300 DPI) dijital gökyüzü haritası paketi <strong className="text-amber-300 font-semibold tabular-nums">250 TL</strong> ücrete tabidir. Tek ödeme ile tüm formatları indirebilirsiniz.
         </p>
 
         {/* Format Selection */}
         <div className="mb-4">
           <label className="block text-xs font-medium text-slate-300 mb-2">
-            İndirme Formatı:
+            İndirilecek Dijital Ürün Formatı:
           </label>
           <div className="grid grid-cols-3 gap-2 text-xs">
             <button
@@ -163,8 +158,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
               }`}
             >
               <FileImage className="w-4 h-4 mb-1 text-amber-300" />
-              <div className="font-medium">Özel Poster</div>
-              <div className="text-[10px] text-slate-400">300 DPI Baskı</div>
+              <div className="font-medium whitespace-nowrap">Özel Poster</div>
+              <div className="text-[10px] text-slate-400 whitespace-nowrap">300 DPI Baskı</div>
             </button>
 
             <button
@@ -177,8 +172,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
               }`}
             >
               <Layers className="w-4 h-4 mb-1 text-sky-300" />
-              <div className="font-medium">Saf Harita</div>
-              <div className="text-[10px] text-slate-400">Yıldız Küresi</div>
+              <div className="font-medium whitespace-nowrap">Saf Harita</div>
+              <div className="text-[10px] text-slate-400 whitespace-nowrap">Yıldız Küresi</div>
             </button>
 
             <button
@@ -191,8 +186,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
               }`}
             >
               <Sparkles className="w-4 h-4 mb-1 text-purple-300" />
-              <div className="font-medium">Vektörel</div>
-              <div className="text-[10px] text-slate-400">SVG Format</div>
+              <div className="font-medium whitespace-nowrap">Vektörel</div>
+              <div className="text-[10px] text-slate-400 whitespace-nowrap">SVG Format</div>
             </button>
           </div>
         </div>
@@ -216,7 +211,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
               type="button"
               disabled={loading}
               onClick={handleSimulatePayment}
-              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#ffd97a] to-[#ebb84d] text-slate-950 font-bold text-sm hover:brightness-110 disabled:opacity-50 transition shadow-lg shadow-amber-500/20 cursor-pointer flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-sm disabled:opacity-50 transition cursor-pointer flex items-center justify-center gap-2 tabular-nums"
             >
               {loading ? (
                 <>
@@ -225,19 +220,19 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                 </>
               ) : (
                 <>
-                  <span>Öde –</span>
-                  <span className="font-black text-slate-900">₺10,00</span>
+                  <span>Dijital Paketi Satın Al –</span>
+                  <span className="font-black text-slate-950">₺250,00</span>
                 </>
               )}
             </button>
           </div>
         )}
 
-        {/* Code Input Row (when payment is done or user has a code) */}
+        {/* Code Input Row */}
         {!isPaid && pendingCode && (
           <div className="mb-3">
             <label className="block text-xs text-slate-300 mb-1">
-              Ödeme Sonrası Verilen Kod:
+              Ödeme Sonrası Verilen Lisans Kodu:
             </label>
             <input
               type="text"
@@ -257,7 +252,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
               type="button"
               disabled={downloading}
               onClick={handleConfirmAndDownload}
-              className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition shadow-lg shadow-emerald-600/30 cursor-pointer flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition cursor-pointer flex items-center justify-center gap-2"
             >
               {downloading ? (
                 <>
@@ -269,10 +264,10 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                   <Download className="w-4 h-4" />
                   <span>
                     {downloadFormat === 'svg'
-                      ? 'SVG Olarak İndir'
+                      ? 'Vektörel SVG Olarak İndir'
                       : downloadFormat === 'poster'
                       ? '300 DPI Özel Posteri İndir'
-                      : 'PNG Olarak İndir'}
+                      : 'Saf Harita PNG Olarak İndir'}
                   </span>
                 </>
               )}
@@ -284,7 +279,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         <div className="mt-4 pt-4 border-t border-[#1c2750] flex items-center justify-between text-[11px] text-slate-400">
           <div className="flex items-center gap-1">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>300 DPI Baskı Garantisi</span>
+            <span>300 DPI Baskı Kalitesi · Anında Teslimat</span>
           </div>
           <button
             type="button"

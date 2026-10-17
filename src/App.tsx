@@ -279,6 +279,8 @@ export default function App() {
       <Header
         onOpenAstronomy={() => setIsAstronomyOpen(true)}
         onOpenDownload={() => setIsDownloadOpen(true)}
+        currentShape={poster.shape}
+        onSelectShape={(shape) => setPoster((prev) => ({ ...prev, shape }))}
         isPaid={isPaid}
       />
 

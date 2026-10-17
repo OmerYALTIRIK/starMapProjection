@@ -8,10 +8,11 @@
 
 Uygulamanın çalışan en güncel sürümünü canlı olarak aşağıdaki bağlantılardan deneyimleyebilirsiniz:
 
-- **Canlı Demo (Geliştirme / Dev):** [https://ais-dev-nsoo3mtakj24q7apzfu4dx-363237614021.europe-west1.run.app](https://ais-dev-nsoo3mtakj24q7apzfu4dx-363237614021.europe-west1.run.app)
-- **Paylaşılabilir Canlı Uygulama:** [https://ais-pre-nsoo3mtakj24q7apzfu4dx-363237614021.europe-west1.run.app](https://ais-pre-nsoo3mtakj24q7apzfu4dx-363237614021.europe-west1.run.app)
+- **Canlı TryCloudflare Demo Bağlantısı:** [https://invisible-jones-locking-guidelines.trycloudflare.com](https://invisible-jones-locking-guidelines.trycloudflare.com)
+- **Paylaşılabilir Canlı Uygulama (Cloud Run):** [https://ais-pre-nsoo3mtakj24q7apzfu4dx-363237614021.europe-west1.run.app](https://ais-pre-nsoo3mtakj24q7apzfu4dx-363237614021.europe-west1.run.app)
+- **Canlı Geliştirme Ortamı:** [https://ais-dev-nsoo3mtakj24q7apzfu4dx-363237614021.europe-west1.run.app](https://ais-dev-nsoo3mtakj24q7apzfu4dx-363237614021.europe-west1.run.app)
 
-*(Not: Proje doğrudan 3000 portunda Vite ile `0.0.0.0` üzerinden servis edilmektedir. Cloudflare Tunnel / trycloudflare veya doğrudan yukarıdaki güvenli HTTPS bağlantısı üzerinden erişilebilir.)*
+*(Not: Vite 6 sunucusu `allowedHosts: true` yapılandırması ile hem Cloudflare Tunnel / trycloudflare hem de Cloud Run domainleri üzerinden kesintisiz erişime açıktır.)*
 
 ---
 
@@ -40,11 +41,11 @@ Bu proje, dünyanın önde gelen kişiselleştirilmiş yıldız posteri e-ticare
    - Donma ve kasma sorunları giderildi, 60 FPS akıcı gökyüzü döndürme ve yakınlaştırma sağlandı.
 
 4. **Yüksek Çözünürlüklü (300 DPI) Poster Kompozitörü:**
-   - Yalnızca gökyüzü dairesini değil; kullanıcının yazdığı başlığı, romantik mesajı, tarihi, koordinatları ve zarif astrolab çerçevesini birleştiren 2000x2800 piksel ultra net poster baskı motoru geliştirildi.
+   - Yalnızca gökyüzü dairesini değil; kullanıcının yazdığı başlığı, romantik mesajı, tarihi, koordinatları ve zarif astrolab çerçevesini birleştiren 2000×2800 piksel ultra net poster baskı motoru geliştirildi.
 
-5. **Türkçe Satış & Ödeme Akışı (₺10):**
-   - Orijinal projedeki ₺10 simüle ödeme akışı korundu ve geliştirildi.
-   - Otomatik `SKY-XXXXXX` kodu üretimi, anında kod doğrulama, `localStorage` kalıcı lisanslama ve SVG/PNG indirme seçenekleri sunuldu.
+5. **Türkçe Dijital Ürün Satış & İndirme Akışı (₺250,00):**
+   - Müşterilerin dijital ürünleri (300 DPI Özel Poster PNG, Saf Gök Küresi PNG ve Vektörel SVG) indirebilmeleri için **₺250,00** fiyatlandırmalı ödeme ve lisanslama akışı tanımlandı.
+   - Otomatik `SKY-XXXXXX` lisans kodu üretimi, anında kod doğrulama, `localStorage` kalıcı lisanslama ve tüm formatları tek ödemeyle indirme imkanı sunuldu.
 
 ---
 

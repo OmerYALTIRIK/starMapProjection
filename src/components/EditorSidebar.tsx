@@ -47,16 +47,21 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({
     }
   };
 
+  const [geoNotice, setGeoNotice] = useState<string | null>(null);
+
   const handleUseCurrentLocation = () => {
+    setGeoNotice(null);
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           onLocationChange(pos.coords.latitude, pos.coords.longitude, 'Mevcut Konumum');
         },
         () => {
-          alert('Konumunuza erişilemedi. Lütfen listeden bir şehir seçin.');
+          setGeoNotice('Konum izni alınamadı, lütfen şehir listesinden seçim yapın.');
         }
       );
+    } else {
+      setGeoNotice('Tarayıcınız konum özelliğini desteklemiyor.');
     }
   };
 
@@ -196,6 +201,9 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({
                   <Compass className="w-3 h-3" /> Konumumu Bul
                 </button>
               </div>
+              {geoNotice && (
+                <p className="text-[11px] text-amber-300">{geoNotice}</p>
+              )}
 
               {/* City Presets */}
               <div>
@@ -374,10 +382,10 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({
               </label>
               <div className="space-y-2">
                 {[
-                  { id: 'cinzel', name: 'Cinzel', sample: 'ROMA KLASİK YILDIZ HARİTASI' },
-                  { id: 'playfair', name: 'Playfair Display', sample: 'Zarif & Romantik Serif' },
-                  { id: 'sans', name: 'Plus Jakarta Sans', sample: 'Modern Minimalist Net Yazı' },
-                  { id: 'script', name: 'Great Vibes', sample: 'Özel El Yazısı Kaligrafi' },
+                  { id: 'cinzel', name: 'Cinzel', sample: 'ROMA KLASİK YILDIZ HARİTASI', cls: 'font-cinzel' },
+                  { id: 'playfair', name: 'Playfair Display', sample: 'Zarif & Romantik Serif', cls: 'font-playfair' },
+                  { id: 'sans', name: 'Plus Jakarta Sans', sample: 'Modern Minimalist Net Yazı', cls: 'font-sans' },
+                  { id: 'script', name: 'Great Vibes', sample: 'Özel El Yazısı Kaligrafi', cls: 'font-script text-lg' },
                 ].map((f) => (
                   <button
                     key={f.id}
@@ -391,7 +399,7 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({
                   >
                     <div>
                       <div className="text-xs font-semibold">{f.name}</div>
-                      <div className="text-sm text-slate-200 mt-0.5" style={{ fontFamily: f.id === 'script' ? 'Great Vibes' : f.id === 'cinzel' ? 'Cinzel' : f.id === 'playfair' ? 'Playfair Display' : 'sans-serif' }}>
+                      <div className={`text-sm text-slate-200 mt-0.5 ${f.cls}`}>
                         {f.sample}
                       </div>
                     </div>
@@ -554,14 +562,14 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({
         <button
           type="button"
           onClick={onOpenDownload}
-          className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-slate-950 font-bold text-sm hover:brightness-110 shadow-lg shadow-amber-400/25 transition cursor-pointer flex items-center justify-center gap-2"
+          className="w-full py-3.5 px-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-sm transition cursor-pointer flex items-center justify-center gap-2 tabular-nums"
         >
-          <span>Baskıya Hazır İndir –</span>
-          <span className="font-black">₺10,00</span>
+          <span>Dijital Paketi İndir –</span>
+          <span className="font-black">₺250,00</span>
           <ChevronRight className="w-4 h-4" />
         </button>
         <p className="text-[11px] text-center text-slate-400 mt-2">
-          Anında dijital teslimat • Vektörel SVG ve 300 DPI PNG dahil
+          Anında dijital teslimat · Vektörel SVG ve 300 DPI PNG dahil
         </p>
       </div>
     </aside>
