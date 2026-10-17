@@ -1,15 +1,19 @@
 @import "tailwindcss";
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   body {
-    background-color: #040816;
-    color: #e8ecf8;
+    background-color: #FAF8F5;
+    color: #141413;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
 }
 
 .font-cinzel {
-  font-family: 'Cinzel', serif;
+  font-family: 'Cinzel', Georgia, serif;
 }
 
 .font-playfair {
@@ -20,20 +24,20 @@
   font-family: 'Great Vibes', cursive;
 }
 
-/* Custom scrollbars for controls */
+/* Subtle luxury scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(10, 16, 38, 0.6);
+  background: #F3EFEA;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(80, 100, 160, 0.5);
-  border-radius: 4px;
+  background: #C8C1B4;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(140, 165, 235, 0.7);
+  background: #9E9585;
 }
 
 /* Star canvas container */

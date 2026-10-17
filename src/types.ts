@@ -1,8 +1,14 @@
-export type PosterTheme = 'midnight' | 'obsidian' | 'cosmic' | 'rose' | 'minimal';
+export type PosterTheme =
+  | 'classic-white'
+  | 'midnight'
+  | 'obsidian'
+  | 'emerald'
+  | 'rose'
+  | 'minimal';
 
 export type PosterShape = 'circle' | 'heart' | 'full';
 
-export type PosterFrame = 'none' | 'black' | 'oak' | 'white' | 'gold';
+export type PosterFrame = 'black' | 'oak' | 'white' | 'gold' | 'none';
 
 export type PosterFont = 'cinzel' | 'playfair' | 'sans' | 'script';
 
@@ -42,7 +48,7 @@ export const POPULAR_CITIES: CityPreset[] = [
   { name: 'İzmir, Türkiye', lat: 38.4237, lng: 27.1428 },
   { name: 'Antalya, Türkiye', lat: 36.8969, lng: 30.7133 },
   { name: 'Bursa, Türkiye', lat: 40.1885, lng: 29.0610 },
-  { name: 'Kapadokya / Nevşehir', lat: 38.6431, lng: 34.8289 },
+  { name: 'Kapadokya, Nevşehir', lat: 38.6431, lng: 34.8289 },
   { name: 'Bodrum, Muğla', lat: 37.0344, lng: 27.4305 },
   { name: 'Trabzon, Türkiye', lat: 41.0027, lng: 39.7168 },
   { name: 'Paris, Fransa', lat: 48.8566, lng: 2.3522 },
@@ -55,12 +61,10 @@ export const POPULAR_CITIES: CityPreset[] = [
 export const SUGGESTED_TITLES = [
   'Seni İlk Gördüğüm Gece',
   'Yıldızların Altında',
-  'İlk Öpücüğümüz',
   'Bizim Hikayemiz Başladı',
-  'Doğduğun Gün Gökyüzü',
   'Evet Dediğim An',
-  'Kalbimin Sahibi',
+  'Dünyaya Gözlerini Açtığın Gece',
   'En Güzel Hatıramız',
-  'Gözlerini Açtığın Gece',
-  'Aşkımızın Yıldız Haritası',
+  'Sonsuzluğa İlk Adım',
+  'Kalplerimizin Buluştuğu Gece',
 ];

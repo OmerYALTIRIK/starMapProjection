@@ -44,38 +44,30 @@ export async function generateHighResPosterBlob(poster: PosterData): Promise<Blo
   if (!ctx) throw new Error('Canvas bağlamı alınamadı');
 
   const theme = poster.theme;
-  if (theme === 'midnight') {
-    const grad = ctx.createLinearGradient(0, 0, width, height);
-    grad.addColorStop(0, '#040816');
-    grad.addColorStop(0.5, '#070f28');
-    grad.addColorStop(1, '#02050e');
-    ctx.fillStyle = grad;
+  const isLight = theme === 'classic-white';
+
+  if (theme === 'classic-white') {
+    ctx.fillStyle = '#FAF8F5';
+  } else if (theme === 'midnight') {
+    ctx.fillStyle = '#0B1528';
   } else if (theme === 'obsidian') {
-    ctx.fillStyle = '#060608';
-  } else if (theme === 'cosmic') {
-    const grad = ctx.createRadialGradient(width / 2, height * 0.4, 100, width / 2, height * 0.4, width);
-    grad.addColorStop(0, '#120d2c');
-    grad.addColorStop(0.6, '#080616');
-    grad.addColorStop(1, '#020108');
-    ctx.fillStyle = grad;
+    ctx.fillStyle = '#0A0A0D';
+  } else if (theme === 'emerald') {
+    ctx.fillStyle = '#0D2120';
   } else if (theme === 'rose') {
-    const grad = ctx.createLinearGradient(0, 0, width, height);
-    grad.addColorStop(0, '#180e18');
-    grad.addColorStop(0.5, '#221122');
-    grad.addColorStop(1, '#0d060e');
-    ctx.fillStyle = grad;
+    ctx.fillStyle = '#241016';
   } else {
-    ctx.fillStyle = '#0a0d18';
+    ctx.fillStyle = '#161922';
   }
   ctx.fillRect(0, 0, width, height);
 
   ctx.save();
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+  ctx.strokeStyle = isLight ? 'rgba(20, 20, 19, 0.16)' : 'rgba(255, 255, 255, 0.12)';
   ctx.lineWidth = 3;
-  ctx.strokeRect(60, 60, width - 120, height - 120);
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+  ctx.strokeRect(64, 64, width - 128, height - 128);
+  ctx.strokeStyle = isLight ? 'rgba(20, 20, 19, 0.06)' : 'rgba(255, 255, 255, 0.04)';
   ctx.lineWidth = 1;
-  ctx.strokeRect(76, 76, width - 152, height - 152);
+  ctx.strokeRect(80, 80, width - 160, height - 160);
   ctx.restore();
 
   const centerX = width / 2;
@@ -85,21 +77,21 @@ export async function generateHighResPosterBlob(poster: PosterData): Promise<Blo
   ctx.save();
   if (poster.shape === 'circle') {
     ctx.beginPath();
-    ctx.arc(centerX, centerY, radius + 22, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(212, 175, 55, 0.3)';
+    ctx.arc(centerX, centerY, radius + 24, 0, Math.PI * 2);
+    ctx.strokeStyle = isLight ? 'rgba(20, 20, 19, 0.28)' : 'rgba(212, 175, 55, 0.38)';
     ctx.lineWidth = 2;
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.arc(centerX, centerY, radius + 14, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+    ctx.arc(centerX, centerY, radius + 15, 0, Math.PI * 2);
+    ctx.strokeStyle = isLight ? 'rgba(20, 20, 19, 0.16)' : 'rgba(255, 255, 255, 0.16)';
     ctx.lineWidth = 1;
     ctx.stroke();
 
     for (let deg = 0; deg < 360; deg += 5) {
       const rad = (deg * Math.PI) / 180;
       const inner = deg % 30 === 0 ? radius + 4 : deg % 15 === 0 ? radius + 8 : radius + 11;
-      const outer = radius + 14;
+      const outer = radius + 15;
       const x1 = centerX + Math.cos(rad) * inner;
       const y1 = centerY + Math.sin(rad) * inner;
       const x2 = centerX + Math.cos(rad) * outer;
@@ -107,7 +99,13 @@ export async function generateHighResPosterBlob(poster: PosterData): Promise<Blo
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
-      ctx.strokeStyle = deg % 30 === 0 ? 'rgba(212, 175, 55, 0.6)' : 'rgba(255, 255, 255, 0.2)';
+      ctx.strokeStyle = isLight
+        ? deg % 30 === 0
+          ? 'rgba(20, 20, 19, 0.55)'
+          : 'rgba(20, 20, 19, 0.22)'
+        : deg % 30 === 0
+        ? 'rgba(212, 175, 55, 0.65)'
+        : 'rgba(255, 255, 255, 0.22)';
       ctx.lineWidth = deg % 30 === 0 ? 2 : 1;
       ctx.stroke();
     }
@@ -140,7 +138,7 @@ export async function generateHighResPosterBlob(poster: PosterData): Promise<Blo
     ctx.save();
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+    ctx.strokeStyle = isLight ? 'rgba(20, 20, 19, 0.35)' : 'rgba(255, 255, 255, 0.35)';
     ctx.lineWidth = 2;
     ctx.stroke();
     ctx.restore();
@@ -150,7 +148,7 @@ export async function generateHighResPosterBlob(poster: PosterData): Promise<Blo
 
   let fontTitle = '64px "Cinzel", Georgia, serif';
   let fontSubtitle = 'italic 34px "Playfair Display", Georgia, serif';
-  const fontMeta = '26px "Plus Jakarta Sans", sans-serif';
+  const fontMeta = '600 26px "Plus Jakarta Sans", sans-serif';
 
   if (poster.font === 'playfair') {
     fontTitle = 'bold 66px "Playfair Display", Georgia, serif';
@@ -159,53 +157,53 @@ export async function generateHighResPosterBlob(poster: PosterData): Promise<Blo
     fontTitle = '88px "Great Vibes", cursive';
     fontSubtitle = '30px "Plus Jakarta Sans", sans-serif';
   } else if (poster.font === 'sans') {
-    fontTitle = 'bold 56px "Plus Jakarta Sans", sans-serif';
+    fontTitle = 'bold 54px "Plus Jakarta Sans", sans-serif';
     fontSubtitle = '32px "Plus Jakarta Sans", sans-serif';
   }
 
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
 
-  ctx.fillStyle = '#d4af37';
-  ctx.font = '22px sans-serif';
+  ctx.fillStyle = isLight ? '#9A7432' : '#D4AF37';
+  ctx.font = '22px Georgia, serif';
   ctx.fillText('✦   ·   ✧   ·   ✦', centerX, textStartY - 50);
 
-  ctx.fillStyle = '#f8fafc';
+  ctx.fillStyle = isLight ? '#141413' : '#FAF8F5';
   ctx.font = fontTitle;
   ctx.fillText(poster.title || 'Seni İlk Gördüğüm Gece', centerX, textStartY + 15);
 
   if (poster.subtitle) {
-    ctx.fillStyle = '#cbd5e1';
+    ctx.fillStyle = isLight ? '#57534E' : '#CBD5E1';
     ctx.font = fontSubtitle;
     ctx.fillText(poster.subtitle, centerX, textStartY + 80);
   }
 
-  ctx.strokeStyle = 'rgba(212, 175, 55, 0.35)';
+  ctx.strokeStyle = isLight ? 'rgba(20, 20, 19, 0.2)' : 'rgba(212, 175, 55, 0.38)';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
-  ctx.moveTo(centerX - 180, textStartY + 130);
-  ctx.lineTo(centerX + 180, textStartY + 130);
+  ctx.moveTo(centerX - 160, textStartY + 130);
+  ctx.lineTo(centerX + 160, textStartY + 130);
   ctx.stroke();
 
   const dateStr = formatDisplayDate(poster.date, poster.time);
-  ctx.fillStyle = '#e2e8f0';
+  ctx.fillStyle = isLight ? '#292524' : '#E2E8F0';
   ctx.font = fontMeta;
   ctx.fillText(dateStr.toUpperCase(), centerX, textStartY + 180);
 
   const locStr = (poster.locationName || 'İSTANBUL, TÜRKİYE').toUpperCase();
-  ctx.fillStyle = '#94a3b8';
+  ctx.fillStyle = isLight ? '#57534E' : '#94A3B8';
   ctx.font = '24px "Plus Jakarta Sans", sans-serif';
   ctx.fillText(locStr, centerX, textStartY + 225);
 
   if (poster.showCoordinatesText) {
     const coordsStr = formatCoordinates(poster.lat, poster.lng);
-    ctx.fillStyle = 'rgba(212, 175, 55, 0.85)';
+    ctx.fillStyle = isLight ? '#9A7432' : 'rgba(212, 175, 55, 0.85)';
     ctx.font = '21px "Plus Jakarta Sans", monospace';
     ctx.fillText(coordsStr, centerX, textStartY + 265);
   }
 
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-  ctx.font = '16px "Plus Jakarta Sans", sans-serif';
+  ctx.fillStyle = isLight ? 'rgba(20, 20, 19, 0.22)' : 'rgba(255, 255, 255, 0.2)';
+  ctx.font = '15px "Plus Jakarta Sans", sans-serif';
   ctx.fillText('CELESTIAL · GERÇEK ZAMANLI ASTRONOMİ & YILDIZ HARİTASI', centerX, height - 90);
 
   return new Promise((resolve, reject) => {
@@ -234,40 +232,32 @@ export async function generateHighResPosterSVG(poster: PosterData): Promise<Blob
   const radius = width * 0.36;
   const textStartY = height * 0.77;
 
-  // Theme colors
-  let bgStop1 = '#040816';
-  let bgStop2 = '#070f28';
-  let bgStop3 = '#02050e';
-  if (poster.theme === 'obsidian') {
-    bgStop1 = '#060608';
-    bgStop2 = '#08080c';
-    bgStop3 = '#040406';
-  } else if (poster.theme === 'cosmic') {
-    bgStop1 = '#120d2c';
-    bgStop2 = '#080616';
-    bgStop3 = '#020108';
-  } else if (poster.theme === 'rose') {
-    bgStop1 = '#180e18';
-    bgStop2 = '#221122';
-    bgStop3 = '#0d060e';
-  } else if (poster.theme === 'minimal') {
-    bgStop1 = '#0a0d18';
-    bgStop2 = '#0e1324';
-    bgStop3 = '#070912';
-  }
+  const isLight = poster.theme === 'classic-white';
 
-  // Generate 360-degree vector astrolabe tick lines
+  let paperFill = '#0B1528';
+  if (poster.theme === 'classic-white') paperFill = '#FAF8F5';
+  else if (poster.theme === 'obsidian') paperFill = '#0A0A0D';
+  else if (poster.theme === 'emerald') paperFill = '#0D2120';
+  else if (poster.theme === 'rose') paperFill = '#241016';
+  else if (poster.theme === 'minimal') paperFill = '#161922';
+
   const ticksSvg: string[] = [];
   if (poster.shape === 'circle') {
     for (let deg = 0; deg < 360; deg += 5) {
       const rad = (deg * Math.PI) / 180;
       const inner = deg % 30 === 0 ? radius + 4 : deg % 15 === 0 ? radius + 8 : radius + 11;
-      const outer = radius + 14;
+      const outer = radius + 15;
       const x1 = (centerX + Math.cos(rad) * inner).toFixed(2);
       const y1 = (centerY + Math.sin(rad) * inner).toFixed(2);
       const x2 = (centerX + Math.cos(rad) * outer).toFixed(2);
       const y2 = (centerY + Math.sin(rad) * outer).toFixed(2);
-      const stroke = deg % 30 === 0 ? 'rgba(212, 175, 55, 0.65)' : 'rgba(255, 255, 255, 0.22)';
+      const stroke = isLight
+        ? deg % 30 === 0
+          ? 'rgba(20,20,19,0.55)'
+          : 'rgba(20,20,19,0.22)'
+        : deg % 30 === 0
+        ? 'rgba(212, 175, 55, 0.65)'
+        : 'rgba(255, 255, 255, 0.22)';
       const strokeW = deg % 30 === 0 ? '2' : '1';
       ticksSvg.push(
         `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${strokeW}" />`
@@ -275,7 +265,6 @@ export async function generateHighResPosterSVG(poster: PosterData): Promise<Blob
     }
   }
 
-  // Also try extracting raw D3 vector paths if Celestial.exportSVG callback resolves within 800ms
   const rawCelestialSvgMarkup = await new Promise<string | null>((resolve) => {
     let settled = false;
     const timer = setTimeout(() => {
@@ -311,12 +300,10 @@ export async function generateHighResPosterSVG(poster: PosterData): Promise<Blob
   const imgX = (centerX - drawWidth / 2).toFixed(2);
   const imgY = (centerY - drawHeight / 2).toFixed(2);
 
-  // Extract inner <g> vector layers from D3-Celestial SVG if available
   let embeddedVectorLayers = '';
   if (rawCelestialSvgMarkup) {
     const viewBoxMatch = rawCelestialSvgMarkup.match(/viewBox="\s*0\s+0\s+(\d+)\s+(\d+)"/);
     const vbW = viewBoxMatch ? parseFloat(viewBoxMatch[1]) : celestialCanvas.width;
-    const vbH = viewBoxMatch ? parseFloat(viewBoxMatch[2]) : celestialCanvas.height;
     const scaleFactor = (drawWidth / vbW).toFixed(4);
     const innerMatch = rawCelestialSvgMarkup.replace(/^[\s\S]*?<svg[^>]*>/i, '').replace(/<\/svg>\s*$/i, '');
     embeddedVectorLayers = `<g transform="translate(${imgX}, ${imgY}) scale(${scaleFactor})" opacity="0.45">${innerMatch}</g>`;
@@ -334,7 +321,7 @@ export async function generateHighResPosterSVG(poster: PosterData): Promise<Blob
     fontWeightTitle = '400';
   } else if (poster.font === 'sans') {
     fontFamilyTitle = "'Plus Jakarta Sans', sans-serif";
-    fontSizeTitle = '56';
+    fontSizeTitle = '54';
   }
 
   const titleText = escapeXml(poster.title || 'Seni İlk Gördüğüm Gece');
@@ -351,41 +338,44 @@ export async function generateHighResPosterSVG(poster: PosterData): Promise<Blob
       ? `<circle cx="${centerX}" cy="${centerY}" r="${radius}" />`
       : poster.shape === 'heart'
       ? `<path d="${heartPath}" />`
-      : `<rect x="140" y="140" width="${width - 280}" height="${height * 0.58}" rx="16" />`;
+      : `<rect x="140" y="140" width="${width - 280}" height="${height * 0.58}" rx="8" />`;
 
   const svgDocument = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
   <defs>
-    <linearGradient id="posterBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${bgStop1}" />
-      <stop offset="50%" stop-color="${bgStop2}" />
-      <stop offset="100%" stop-color="${bgStop3}" />
-    </linearGradient>
     <clipPath id="skyMask">
       ${clipContent}
     </clipPath>
   </defs>
 
-  <!-- Poster Background -->
-  <rect width="${width}" height="${height}" fill="url(#posterBg)" />
+  <!-- Poster Paper Background -->
+  <rect width="${width}" height="${height}" fill="${paperFill}" />
 
   <!-- Outer Double Borders -->
-  <rect x="60" y="60" width="${width - 120}" height="${height - 120}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="3" />
-  <rect x="76" y="76" width="${width - 152}" height="${height - 152}" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
+  <rect x="64" y="64" width="${width - 128}" height="${height - 128}" fill="none" stroke="${
+    isLight ? 'rgba(20,20,19,0.16)' : 'rgba(255,255,255,0.12)'
+  }" stroke-width="3" />
+  <rect x="80" y="80" width="${width - 160}" height="${height - 160}" fill="none" stroke="${
+    isLight ? 'rgba(20,20,19,0.06)' : 'rgba(255,255,255,0.04)'
+  }" stroke-width="1" />
 
   <!-- Astrolabe Outer Rings & Degree Ticks -->
   ${
     poster.shape === 'circle'
       ? `
-  <circle cx="${centerX}" cy="${centerY}" r="${radius + 22}" fill="none" stroke="rgba(212,175,55,0.32)" stroke-width="2" />
-  <circle cx="${centerX}" cy="${centerY}" r="${radius + 14}" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="1" />
+  <circle cx="${centerX}" cy="${centerY}" r="${radius + 24}" fill="none" stroke="${
+        isLight ? 'rgba(20,20,19,0.28)' : 'rgba(212,175,55,0.38)'
+      }" stroke-width="2" />
+  <circle cx="${centerX}" cy="${centerY}" r="${radius + 15}" fill="none" stroke="${
+        isLight ? 'rgba(20,20,19,0.16)' : 'rgba(255,255,255,0.16)'
+      }" stroke-width="1" />
   <g id="astrolabe-ticks">
     ${ticksSvg.join('\n    ')}
   </g>`
       : ''
   }
 
-  <!-- Celestial Sky Field (High-Res Luminous Star Map + Vector Paths) -->
+  <!-- Celestial Sky Field -->
   <g clip-path="url(#skyMask)">
     <image x="${imgX}" y="${imgY}" width="${drawWidth.toFixed(2)}" height="${drawHeight.toFixed(2)}" xlink:href="${canvasDataUrl}" href="${canvasDataUrl}" preserveAspectRatio="xMidYMid slice" />
     ${embeddedVectorLayers}
@@ -393,30 +383,50 @@ export async function generateHighResPosterSVG(poster: PosterData): Promise<Blob
 
   ${
     poster.shape === 'circle'
-      ? `<circle cx="${centerX}" cy="${centerY}" r="${radius}" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2" />`
+      ? `<circle cx="${centerX}" cy="${centerY}" r="${radius}" fill="none" stroke="${
+          isLight ? 'rgba(20,20,19,0.35)' : 'rgba(255,255,255,0.35)'
+        }" stroke-width="2" />`
       : poster.shape === 'heart'
-      ? `<path d="${heartPath}" fill="none" stroke="rgba(212,175,55,0.4)" stroke-width="2.5" />`
+      ? `<path d="${heartPath}" fill="none" stroke="${
+          isLight ? 'rgba(20,20,19,0.3)' : 'rgba(212,175,55,0.4)'
+        }" stroke-width="2.5" />`
       : ''
   }
 
   <!-- Personalization Typography Layer -->
   <g text-anchor="middle">
-    <text x="${centerX}" y="${textStartY - 50}" fill="#d4af37" font-size="22" font-family="Georgia, serif" letter-spacing="8">✦ · ✧ · ✦</text>
-    <text x="${centerX}" y="${textStartY + 15}" fill="#f8fafc" font-size="${fontSizeTitle}" font-weight="${fontWeightTitle}" font-family="${fontFamilyTitle}">${titleText}</text>
+    <text x="${centerX}" y="${textStartY - 50}" fill="${
+    isLight ? '#9A7432' : '#D4AF37'
+  }" font-size="22" font-family="Georgia, serif" letter-spacing="8">✦ · ✧ · ✦</text>
+    <text x="${centerX}" y="${textStartY + 15}" fill="${
+    isLight ? '#141413' : '#FAF8F5'
+  }" font-size="${fontSizeTitle}" font-weight="${fontWeightTitle}" font-family="${fontFamilyTitle}">${titleText}</text>
     ${
       subtitleText
-        ? `<text x="${centerX}" y="${textStartY + 80}" fill="#cbd5e1" font-size="33" font-style="italic" font-family="'Playfair Display', Georgia, serif">${subtitleText}</text>`
+        ? `<text x="${centerX}" y="${textStartY + 80}" fill="${
+            isLight ? '#57534E' : '#CBD5E1'
+          }" font-size="33" font-style="italic" font-family="'Playfair Display', Georgia, serif">${subtitleText}</text>`
         : ''
     }
-    <line x1="${centerX - 180}" y1="${textStartY + 130}" x2="${centerX + 180}" y2="${textStartY + 130}" stroke="rgba(212,175,55,0.35)" stroke-width="1.5" />
-    <text x="${centerX}" y="${textStartY + 180}" fill="#e2e8f0" font-size="26" font-weight="600" font-family="'Plus Jakarta Sans', sans-serif" letter-spacing="4">${dateText}</text>
-    <text x="${centerX}" y="${textStartY + 225}" fill="#94a3b8" font-size="24" font-family="'Plus Jakarta Sans', sans-serif" letter-spacing="3">${locText}</text>
+    <line x1="${centerX - 160}" y1="${textStartY + 130}" x2="${centerX + 160}" y2="${textStartY + 130}" stroke="${
+    isLight ? 'rgba(20,20,19,0.2)' : 'rgba(212,175,55,0.38)'
+  }" stroke-width="1.5" />
+    <text x="${centerX}" y="${textStartY + 180}" fill="${
+    isLight ? '#292524' : '#E2E8F0'
+  }" font-size="26" font-weight="600" font-family="'Plus Jakarta Sans', sans-serif" letter-spacing="4">${dateText}</text>
+    <text x="${centerX}" y="${textStartY + 225}" fill="${
+    isLight ? '#57534E' : '#94A3B8'
+  }" font-size="24" font-family="'Plus Jakarta Sans', sans-serif" letter-spacing="3">${locText}</text>
     ${
       poster.showCoordinatesText
-        ? `<text x="${centerX}" y="${textStartY + 265}" fill="rgba(212,175,55,0.85)" font-size="21" font-family="monospace" letter-spacing="2">${coordsText}</text>`
+        ? `<text x="${centerX}" y="${textStartY + 265}" fill="${
+            isLight ? '#9A7432' : 'rgba(212,175,55,0.85)'
+          }" font-size="21" font-family="monospace" letter-spacing="2">${coordsText}</text>`
         : ''
     }
-    <text x="${centerX}" y="${height - 90}" fill="rgba(255,255,255,0.22)" font-size="16" font-family="'Plus Jakarta Sans', sans-serif" letter-spacing="3">CELESTIAL · GERÇEK ZAMANLI ASTRONOMİ &amp; YILDIZ HARİTASI</text>
+    <text x="${centerX}" y="${height - 90}" fill="${
+    isLight ? 'rgba(20,20,19,0.22)' : 'rgba(255,255,255,0.2)'
+  }" font-size="15" font-family="'Plus Jakarta Sans', sans-serif" letter-spacing="3">CELESTIAL · GERÇEK ZAMANLI ASTRONOMİ &amp; YILDIZ HARİTASI</text>
   </g>
 </svg>`;
 

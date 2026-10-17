@@ -16,43 +16,47 @@ declare global {
 
 const OCCASION_PRESETS = [
   {
-    label: 'İlk Tanışma & Aşk',
+    label: 'Galeri Klasik (Beyaz & Lacivert)',
     preset: {
       title: 'Seni İlk Gördüğüm Gece',
-      subtitle: 'Yıldızlar senin için parıldıyordu...',
-      theme: 'midnight' as const,
+      subtitle: 'Yıldızlar o gece bizim için hizalandı',
+      theme: 'classic-white' as const,
       shape: 'circle' as const,
+      frame: 'oak' as const,
       font: 'cinzel' as const,
     },
   },
   {
-    label: 'Evlilik Teklifi & Yıldönümü',
+    label: 'Geceyarısı & Siyah Çerçeve',
+    preset: {
+      title: 'Yıldızların Altında',
+      subtitle: 'Sonsuz evrende bizim hikayemiz başladı',
+      theme: 'midnight' as const,
+      shape: 'circle' as const,
+      frame: 'black' as const,
+      font: 'playfair' as const,
+    },
+  },
+  {
+    label: 'Yıldönümü & Kalp Kesim',
     preset: {
       title: 'Evet Dediğim An',
       subtitle: 'Kalplerimizin ve yıldızların buluştuğu gece',
       theme: 'rose' as const,
       shape: 'heart' as const,
+      frame: 'gold' as const,
       font: 'script' as const,
     },
   },
   {
-    label: 'Doğum Günü & Bebek',
+    label: 'Bebek & Doğum Günü',
     preset: {
       title: 'Dünyaya Gözlerini Açtığın Gece',
       subtitle: 'Hoş geldin küçük yıldızımız',
-      theme: 'obsidian' as const,
+      theme: 'emerald' as const,
       shape: 'circle' as const,
+      frame: 'oak' as const,
       font: 'playfair' as const,
-    },
-  },
-  {
-    label: 'Kozmik Galeri',
-    preset: {
-      title: 'Yıldızların Altında',
-      subtitle: 'Sonsuz evrende bizim hikayemiz',
-      theme: 'cosmic' as const,
-      shape: 'full' as const,
-      font: 'sans' as const,
     },
   },
 ];
@@ -60,15 +64,15 @@ const OCCASION_PRESETS = [
 export default function App() {
   const [poster, setPoster] = useState<PosterData>({
     title: 'Seni İlk Gördüğüm Gece',
-    subtitle: 'Yıldızlar senin için parıldıyordu...',
+    subtitle: 'Yıldızlar o gece bizim için hizalandı',
     date: new Date().toISOString().slice(0, 10),
     time: '22:30',
     locationName: 'İstanbul, Türkiye',
     lat: 41.0082,
     lng: 28.9784,
-    theme: 'midnight',
+    theme: 'classic-white',
     shape: 'circle',
-    frame: 'black',
+    frame: 'oak',
     font: 'cinzel',
     showConstellationLines: true,
     showConstellationNames: true,
@@ -140,14 +144,14 @@ export default function App() {
           },
           mw: {
             show: poster.showMilkyWay,
-            style: { fill: '#ffffff', opacity: 0.16 },
+            style: { fill: '#ffffff', opacity: 0.14 },
           },
           lines: {
             graticule: {
               show: poster.showGraticule,
               stroke: '#ffffff',
-              width: 0.6,
-              opacity: 0.35,
+              width: 0.55,
+              opacity: 0.3,
             },
             equatorial: { show: false },
             ecliptic: { show: false },
@@ -155,7 +159,7 @@ export default function App() {
             supergalactic: { show: false },
           },
           background: {
-            fill: '#040816',
+            fill: '#0B1528',
             opacity: 1,
             stroke: 'transparent',
             width: 0,
@@ -193,11 +197,12 @@ export default function App() {
   useEffect(() => {
     if (!window.Celestial || !initializedRef.current) return;
 
-    let bgFill = '#040816';
-    if (poster.theme === 'obsidian') bgFill = '#060608';
-    else if (poster.theme === 'cosmic') bgFill = '#0a061c';
-    else if (poster.theme === 'rose') bgFill = '#150a16';
-    else if (poster.theme === 'minimal') bgFill = '#080d1e';
+    let bgFill = '#0B1528';
+    if (poster.theme === 'classic-white' || poster.theme === 'midnight') bgFill = '#0B1528';
+    else if (poster.theme === 'obsidian') bgFill = '#0A0A0D';
+    else if (poster.theme === 'emerald') bgFill = '#0D2120';
+    else if (poster.theme === 'rose') bgFill = '#241016';
+    else if (poster.theme === 'minimal') bgFill = '#161922';
 
     const updatedConfig = {
       stars: {
@@ -316,7 +321,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#040816] text-[#e8ecf8]">
+    <div className="min-h-screen flex flex-col bg-[#FAF8F5] text-[#141413]">
       {/* Top Corporate Navigation */}
       <Header
         onOpenAstronomy={() => setIsAstronomyOpen(true)}
@@ -325,34 +330,34 @@ export default function App() {
       />
 
       {/* HERO + FRONT-AND-CENTER INTERACTIVE STAR MAP STUDIO */}
-      <section id="tasarla" className="pt-8 pb-14 lg:pt-12 lg:pb-20 px-4 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <section id="tasarla" className="pt-8 pb-16 lg:pt-10 lg:pb-20 px-4 lg:px-8">
+        <div className="max-w-[1380px] mx-auto">
           {/* Editorial Hero Lead-In */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-7">
             <div>
-              <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 mb-2.5">
-                <span className="text-amber-300 font-medium">ESA Hipparcos Yıldız Kataloğu</span>
+              <div className="flex flex-wrap items-center gap-2 text-xs text-[#6E6A63] mb-2">
+                <span className="text-[#9A7432] font-semibold">ESA Hipparcos Yıldız Kataloğu</span>
                 <span aria-hidden="true">·</span>
                 <span>300 DPI Baskı PNG + Vektörel SVG</span>
                 <span aria-hidden="true">·</span>
                 <span className="tabular-nums">48.900+ Teslim Edilen Harita</span>
               </div>
-              <h1 className="font-cinzel text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-100 tracking-tight max-w-3xl">
+              <h1 className="font-cinzel text-2xl sm:text-4xl lg:text-[42px] font-bold text-[#141413] tracking-tight leading-tight max-w-3xl">
                 En Özel Anınızın Gökyüzünü Tasarlayın
               </h1>
             </div>
 
             {/* Quick Occasion Presets */}
-            <div className="flex flex-wrap items-center gap-1.5 bg-[#080f28] p-1.5 rounded-xl border border-[#192653]">
+            <div className="flex flex-wrap items-center gap-1.5 bg-[#F3EFEA] p-1.5 rounded-xl border border-[#E5E0D5]">
               {OCCASION_PRESETS.map((oc) => (
                 <button
                   key={oc.label}
                   type="button"
                   onClick={() => setPoster((prev) => ({ ...prev, ...oc.preset }))}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer whitespace-nowrap shrink-0 ${
-                    poster.title === oc.preset.title
-                      ? 'bg-amber-400 text-slate-950 font-semibold'
-                      : 'text-slate-300 hover:text-white hover:bg-[#101c42]'
+                    poster.theme === oc.preset.theme && poster.shape === oc.preset.shape
+                      ? 'bg-[#141413] text-white font-semibold shadow-sm'
+                      : 'text-[#57534E] hover:text-[#141413] hover:bg-white/70'
                   }`}
                 >
                   {oc.label}
@@ -362,7 +367,7 @@ export default function App() {
           </div>
 
           {/* Main 2-Column Live Configurator Box */}
-          <div className="rounded-2xl bg-[#060b1d] border border-[#1a2754] shadow-2xl overflow-hidden flex flex-col lg:flex-row items-stretch">
+          <div className="rounded-2xl bg-white border border-[#E5E0D5] shadow-[0_20px_50px_-20px_rgba(20,20,19,0.12)] overflow-hidden flex flex-col lg:flex-row items-stretch">
             <PosterPreview
               poster={poster}
               onZoomIn={handleZoomIn}
@@ -380,7 +385,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* Corporate E-Commerce Sections (Collections, Bento Capabilities, Testimonials, FAQ, Footer) */}
+      {/* Corporate E-Commerce Sections */}
       <CorporateSections
         onApplyPreset={(preset) => setPoster((prev) => ({ ...prev, ...preset }))}
         onOpenDownload={() => setIsDownloadOpen(true)}

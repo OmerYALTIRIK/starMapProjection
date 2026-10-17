@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import {
-  Type,
-  Palette,
-  Eye,
-  Frame,
   MapPin,
   Calendar,
   Clock,
-  Sparkles,
   Compass,
   Check,
-  ChevronRight,
+  ArrowRight,
   Sliders,
+  Type,
+  Palette,
+  Frame,
 } from 'lucide-react';
 import {
   PosterData,
@@ -31,6 +29,57 @@ interface EditorSidebarProps {
   onOpenDownload: () => void;
 }
 
+const POSTER_THEMES: {
+  id: PosterTheme;
+  label: string;
+  desc: string;
+  outerRing: string;
+  innerCircle: string;
+}[] = [
+  {
+    id: 'classic-white',
+    label: 'Galeri Beyazı & Lacivert',
+    desc: 'Krem kağıt, gece mavisi küre',
+    outerRing: 'bg-[#FAF8F5] border-[#D5CFC4]',
+    innerCircle: 'bg-[#0B1528]',
+  },
+  {
+    id: 'midnight',
+    label: 'Klasik Gece Mavisi',
+    desc: 'Derin kraliyet laciverti',
+    outerRing: 'bg-[#0B1528] border-[#1E2F52]',
+    innerCircle: 'bg-[#D4AF37]',
+  },
+  {
+    id: 'obsidian',
+    label: 'Saf Mermer Siyah',
+    desc: 'Mat galeri siyahı & beyaz',
+    outerRing: 'bg-[#0A0A0D] border-[#27272A]',
+    innerCircle: 'bg-[#FAF8F5]',
+  },
+  {
+    id: 'emerald',
+    label: 'Kuzey Zümrüt Yeşili',
+    desc: 'Botanik koyu zümrüt & altın',
+    outerRing: 'bg-[#0D2120] border-[#1F4240]',
+    innerCircle: 'bg-[#D4AF37]',
+  },
+  {
+    id: 'rose',
+    label: 'Vintage Bordo & Altın',
+    desc: 'Romantik şarap & şampanya',
+    outerRing: 'bg-[#241016] border-[#4A222E]',
+    innerCircle: 'bg-[#E5C158]',
+  },
+  {
+    id: 'minimal',
+    label: 'İskandinav Antrasit',
+    desc: 'Modern koyu arduvaz gri',
+    outerRing: 'bg-[#161922] border-[#2E3446]',
+    innerCircle: 'bg-[#E2E8F0]',
+  },
+];
+
 export const EditorSidebar: React.FC<EditorSidebarProps> = ({
   poster,
   onChange,
@@ -38,7 +87,8 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({
   onDateChange,
   onOpenDownload,
 }) => {
-  const [activeTab, setActiveTab] = useState<'text' | 'design' | 'sky' | 'frame'>('text');
+  const [activeTab, setActiveTab] = useState<'design' | 'moment' | 'text' | 'sky'>('design');
+  const [geoNotice, setGeoNotice] = useState<string | null>(null);
 
   const handleCitySelect = (cityName: string) => {
     const city = POPULAR_CITIES.find((c) => c.name === cityName);
@@ -46,8 +96,6 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({
       onLocationChange(city.lat, city.lng, city.name);
     }
   };
-
-  const [geoNotice, setGeoNotice] = useState<string | null>(null);
 
   const handleUseCurrentLocation = () => {
     setGeoNotice(null);
@@ -74,144 +122,176 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({
   };
 
   return (
-    <aside className="w-full lg:w-[440px] bg-[#070c22] border-t lg:border-t-0 lg:border-l border-[#19234b] flex flex-col lg:h-[780px] z-20 shrink-0">
-      {/* Tab Navigation */}
-      <div className="grid grid-cols-4 border-b border-[#1b2752] bg-[#05091b] p-1 gap-1">
+    <aside className="w-full lg:w-[460px] bg-white border-t lg:border-t-0 lg:border-l border-[#E5E0D5] flex flex-col lg:h-[800px] z-20 shrink-0">
+      {/* Step Navigation Tabs */}
+      <div className="grid grid-cols-4 border-b border-[#E5E0D5] bg-[#FAF8F5] p-1.5 gap-1">
         {[
-          { id: 'text', label: 'Metinler', icon: Type },
-          { id: 'design', label: 'Tasarım', icon: Palette },
-          { id: 'sky', label: 'Gökyüzü', icon: Eye },
-          { id: 'frame', label: 'Çerçeve', icon: Frame },
+          { id: 'design', step: '01', label: 'Stil & Renk', icon: Palette },
+          { id: 'moment', step: '02', label: 'Konum & An', icon: MapPin },
+          { id: 'text', step: '03', label: 'Başlık & Yazı', icon: Type },
+          { id: 'sky', step: '04', label: 'Gökyüzü', icon: Sliders },
         ].map((tab) => {
-          const Icon = tab.icon;
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex flex-col items-center justify-center py-2.5 px-1 rounded-xl text-xs font-medium transition cursor-pointer ${
+              className={`flex flex-col items-center justify-center py-2.5 px-1.5 rounded-lg text-xs transition-all cursor-pointer ${
                 isActive
-                  ? 'bg-amber-400/15 text-amber-300 border border-amber-400/40 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-[#0c1333]'
+                  ? 'bg-white text-[#141413] font-semibold shadow-sm border border-[#E5E0D5]'
+                  : 'text-[#6E6A63] hover:text-[#141413] hover:bg-white/60'
               }`}
             >
-              <Icon className="w-4 h-4 mb-1" />
-              <span>{tab.label}</span>
+              <span className="text-[10px] font-mono text-[#9A7432] mb-0.5 tabular-nums">
+                {tab.step}
+              </span>
+              <span className="whitespace-nowrap">{tab.label}</span>
             </button>
           );
         })}
       </div>
 
-      {/* Tab Content Panels */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-6">
-        {/* TAB 1: METİNLER */}
-        {activeTab === 'text' && (
-          <div className="space-y-5 animate-in fade-in duration-200">
-            {/* Title */}
+      {/* Step Content Area */}
+      <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
+        {/* STEP 01: STİL, RENK & ÇERÇEVE (Like The Night Sky & Maps For Moments) */}
+        {activeTab === 'design' && (
+          <div className="space-y-6">
+            {/* Color Swatches */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-amber-300 mb-1.5">
-                Poster Başlığı
-              </label>
-              <input
-                type="text"
-                value={poster.title}
-                onChange={(e) => onChange({ title: e.target.value })}
-                placeholder="Örn: Seni İlk Gördüğüm Gece"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#223163] bg-[#0c1436] text-slate-100 text-sm focus:outline-none focus:border-amber-400 transition"
-              />
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-xs font-semibold text-[#141413]">
+                  01. Poster Renk Paleti
+                </label>
+                <span className="text-xs text-[#6E6A63]">
+                  {POSTER_THEMES.find((t) => t.id === poster.theme)?.label}
+                </span>
+              </div>
 
-              {/* Title Suggestions */}
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {SUGGESTED_TITLES.slice(0, 4).map((title) => (
+              <div className="grid grid-cols-2 gap-2.5">
+                {POSTER_THEMES.map((th) => {
+                  const selected = poster.theme === th.id;
+                  return (
+                    <button
+                      key={th.id}
+                      type="button"
+                      onClick={() => onChange({ theme: th.id })}
+                      className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
+                        selected
+                          ? 'border-[#141413] bg-[#FAF8F5] ring-1 ring-[#141413]'
+                          : 'border-[#E5E0D5] bg-white hover:border-[#B8AFA0]'
+                      }`}
+                    >
+                      {/* Dual-tone circular swatch */}
+                      <span
+                        className={`w-8 h-8 rounded-full border ${th.outerRing} flex items-center justify-center shrink-0 shadow-inner`}
+                      >
+                        <span className={`w-4 h-4 rounded-full ${th.innerCircle}`} />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="font-semibold text-xs text-[#141413] truncate">
+                          {th.label}
+                        </div>
+                        <div className="text-[11px] text-[#6E6A63] truncate">{th.desc}</div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Map Cutout Shape */}
+            <div>
+              <label className="block text-xs font-semibold text-[#141413] mb-2.5">
+                02. Harita Kesim Biçimi
+              </label>
+              <div className="grid grid-cols-3 gap-2.5">
+                {[
+                  { id: 'circle', label: 'Astrolab Daire', desc: '360° Derece Halkalı' },
+                  { id: 'heart', label: 'Romantik Kalp', desc: 'Özel Kalp Kesim' },
+                  { id: 'full', label: 'Tam Kubbe', desc: 'Geniş Gökyüzü' },
+                ].map((sh) => (
                   <button
-                    key={title}
+                    key={sh.id}
                     type="button"
-                    onClick={() => onChange({ title })}
-                    className="text-[11px] px-2.5 py-1 rounded-lg bg-[#0e173d] hover:bg-amber-400/20 text-slate-300 hover:text-amber-200 border border-[#213063] transition cursor-pointer"
+                    onClick={() => onChange({ shape: sh.id as PosterShape })}
+                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                      poster.shape === sh.id
+                        ? 'border-[#141413] bg-[#141413] text-white font-semibold'
+                        : 'border-[#E5E0D5] bg-white text-[#3F3C38] hover:border-[#B8AFA0]'
+                    }`}
                   >
-                    + {title}
+                    <div className="text-xs whitespace-nowrap">{sh.label}</div>
+                    <div
+                      className={`text-[10px] mt-0.5 whitespace-nowrap ${
+                        poster.shape === sh.id ? 'text-[#D6D1C7]' : 'text-[#78716C]'
+                      }`}
+                    >
+                      {sh.desc}
+                    </div>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Subtitle / Special Note */}
+            {/* Frame Selection */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-amber-300 mb-1.5">
-                Alt Başlık / Romantik Mesaj
+              <label className="block text-xs font-semibold text-[#141413] mb-2.5">
+                03. Galeri Çerçeve Önizlemesi
               </label>
-              <textarea
-                rows={2}
-                value={poster.subtitle}
-                onChange={(e) => onChange({ subtitle: e.target.value })}
-                placeholder="Örn: Yıldızlar senin için parıldıyordu..."
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#223163] bg-[#0c1436] text-slate-100 text-sm focus:outline-none focus:border-amber-400 transition resize-none"
-              />
-            </div>
-
-            {/* Date & Time */}
-            <div className="p-4 rounded-xl bg-[#09102c] border border-[#1d2b59] space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4 text-sky-400" /> Tarih ve Saat
-                </span>
-                <button
-                  type="button"
-                  onClick={handleSetCurrentTime}
-                  className="text-[11px] text-amber-300 hover:underline flex items-center gap-1 cursor-pointer"
-                >
-                  <Clock className="w-3 h-3" /> Şimdi
-                </button>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2.5">
-                <div>
-                  <label className="block text-[11px] text-slate-400 mb-1">Tarih</label>
-                  <input
-                    type="date"
-                    value={poster.date}
-                    onChange={(e) => onDateChange(e.target.value, poster.time)}
-                    className="w-full px-2.5 py-2 rounded-lg border border-[#223163] bg-[#0e173b] text-slate-100 text-xs focus:outline-none focus:border-amber-400"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] text-slate-400 mb-1">Saat</label>
-                  <input
-                    type="time"
-                    value={poster.time}
-                    onChange={(e) => onDateChange(poster.date, e.target.value)}
-                    className="w-full px-2.5 py-2 rounded-lg border border-[#223163] bg-[#0e173b] text-slate-100 text-xs focus:outline-none focus:border-amber-400"
-                  />
-                </div>
+              <div className="grid grid-cols-5 gap-2">
+                {[
+                  { id: 'black', label: 'Mat Siyah', swatch: 'bg-[#18181B] border-[#18181B]' },
+                  { id: 'oak', label: 'Doğal Meşe', swatch: 'bg-[#A47E53] border-[#84623C]' },
+                  { id: 'gold', label: 'Altın Pirinç', swatch: 'bg-[#C29B48] border-[#9A7432]' },
+                  { id: 'white', label: 'Beyaz Ahşap', swatch: 'bg-[#F8F6F0] border-[#D0C9BC]' },
+                  { id: 'none', label: 'Çerçevesiz', swatch: 'bg-white border-dashed border-[#A8A29E]' },
+                ].map((fr) => (
+                  <button
+                    key={fr.id}
+                    type="button"
+                    onClick={() => onChange({ frame: fr.id as PosterFrame })}
+                    className={`p-2 rounded-xl border text-center transition cursor-pointer flex flex-col items-center ${
+                      poster.frame === fr.id
+                        ? 'border-[#141413] bg-[#FAF8F5] ring-1 ring-[#141413] font-semibold'
+                        : 'border-[#E5E0D5] bg-white hover:border-[#B8AFA0]'
+                    }`}
+                  >
+                    <span className={`w-6 h-6 rounded-full border mb-1.5 ${fr.swatch}`} />
+                    <span className="text-[11px] text-[#141413] whitespace-nowrap">{fr.label}</span>
+                  </button>
+                ))}
               </div>
             </div>
+          </div>
+        )}
 
-            {/* Location & Coordinates */}
-            <div className="p-4 rounded-xl bg-[#09102c] border border-[#1d2b59] space-y-3">
+        {/* STEP 02: KONUM & AN (Location, Date & Time) */}
+        {activeTab === 'moment' && (
+          <div className="space-y-5">
+            {/* Location Card */}
+            <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#E5E0D5] space-y-3.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-emerald-400" /> Konum ve Koordinatlar
+                <span className="text-xs font-semibold text-[#141413] flex items-center gap-1.5">
+                  <MapPin className="w-4 h-4 text-[#9A7432]" /> Özel Anın gerçekleştiği Konum
                 </span>
                 <button
                   type="button"
                   onClick={handleUseCurrentLocation}
-                  className="text-[11px] text-emerald-300 hover:underline flex items-center gap-1 cursor-pointer"
+                  className="text-xs font-medium text-[#9A7432] hover:underline flex items-center gap-1 cursor-pointer"
                 >
-                  <Compass className="w-3 h-3" /> Konumumu Bul
+                  <Compass className="w-3.5 h-3.5" /> GPS Konumumu Bul
                 </button>
               </div>
-              {geoNotice && (
-                <p className="text-[11px] text-amber-300">{geoNotice}</p>
-              )}
 
-              {/* City Presets */}
+              {geoNotice && <p className="text-xs text-[#9A7432]">{geoNotice}</p>}
+
               <div>
-                <label className="block text-[11px] text-slate-400 mb-1">Hızlı Şehir Seçimi:</label>
+                <label className="block text-xs text-[#57534E] mb-1">Hızlı Şehir Seçimi</label>
                 <select
                   value={poster.locationName}
                   onChange={(e) => handleCitySelect(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-[#223163] bg-[#0e173b] text-slate-100 text-xs focus:outline-none focus:border-amber-400"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-[#D6D1C7] bg-white text-[#141413] text-xs font-medium focus:outline-none focus:border-[#141413]"
                 >
                   {POPULAR_CITIES.map((c) => (
                     <option key={c.name} value={c.name}>
@@ -221,171 +301,167 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({
                 </select>
               </div>
 
-              {/* Custom Location Name */}
               <div>
-                <label className="block text-[11px] text-slate-400 mb-1">
-                  Posterde Görünecek Konum İsmi:
+                <label className="block text-xs text-[#57534E] mb-1">
+                  Posterde Yazacak Konum Adı
                 </label>
                 <input
                   type="text"
                   value={poster.locationName}
                   onChange={(e) => onChange({ locationName: e.target.value })}
-                  placeholder="Örn: İstanbul, Galata Kulesi"
-                  className="w-full px-3 py-2 rounded-lg border border-[#223163] bg-[#0e173b] text-slate-100 text-xs focus:outline-none focus:border-amber-400"
+                  placeholder="Örn: Moda Sahili, İstanbul"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-[#D6D1C7] bg-white text-[#141413] text-xs focus:outline-none focus:border-[#141413]"
                 />
               </div>
 
-              {/* Lat & Lng */}
-              <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="grid grid-cols-2 gap-2.5 text-xs">
                 <div>
-                  <label className="block text-[10px] text-slate-400 mb-1">Enlem (Latitude)</label>
+                  <label className="block text-[11px] text-[#6E6A63] mb-1">Enlem (Kuzey/Güney)</label>
                   <input
                     type="number"
                     step="0.0001"
                     value={poster.lat}
                     onChange={(e) =>
-                      onLocationChange(parseFloat(e.target.value) || 0, poster.lng, poster.locationName)
+                      onLocationChange(
+                        parseFloat(e.target.value) || 0,
+                        poster.lng,
+                        poster.locationName
+                      )
                     }
-                    className="w-full px-2 py-1.5 rounded-lg border border-[#223163] bg-[#0e173b] text-slate-200 text-xs"
+                    className="w-full px-3 py-2 rounded-lg border border-[#D6D1C7] bg-white text-[#141413] text-xs font-mono tabular-nums"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-slate-400 mb-1">Boylam (Longitude)</label>
+                  <label className="block text-[11px] text-[#6E6A63] mb-1">Boylam (Doğu/Batı)</label>
                   <input
                     type="number"
                     step="0.0001"
                     value={poster.lng}
                     onChange={(e) =>
-                      onLocationChange(poster.lat, parseFloat(e.target.value) || 0, poster.locationName)
+                      onLocationChange(
+                        poster.lat,
+                        parseFloat(e.target.value) || 0,
+                        poster.locationName
+                      )
                     }
-                    className="w-full px-2 py-1.5 rounded-lg border border-[#223163] bg-[#0e173b] text-slate-200 text-xs"
+                    className="w-full px-3 py-2 rounded-lg border border-[#D6D1C7] bg-white text-[#141413] text-xs font-mono tabular-nums"
                   />
                 </div>
               </div>
+            </div>
 
-              {/* Toggle coordinates on poster */}
-              <label className="flex items-center gap-2 pt-1 text-xs text-slate-300 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={poster.showCoordinatesText}
-                  onChange={(e) => onChange({ showCoordinatesText: e.target.checked })}
-                  className="rounded border-[#223163] text-amber-400 focus:ring-0"
-                />
-                <span>Koordinat metnini posterde göster</span>
-              </label>
+            {/* Date & Time Card */}
+            <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#E5E0D5] space-y-3.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-[#141413] flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-[#9A7432]" /> Gökyüzü Tarihi ve Saati
+                </span>
+                <button
+                  type="button"
+                  onClick={handleSetCurrentTime}
+                  className="text-xs font-medium text-[#9A7432] hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <Clock className="w-3.5 h-3.5" /> Şu Anı Seç
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs text-[#57534E] mb-1">Tarih</label>
+                  <input
+                    type="date"
+                    value={poster.date}
+                    onChange={(e) => onDateChange(e.target.value, poster.time)}
+                    className="w-full px-3 py-2 rounded-lg border border-[#D6D1C7] bg-white text-[#141413] text-xs font-medium focus:outline-none focus:border-[#141413]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-[#57534E] mb-1">Saat</label>
+                  <input
+                    type="time"
+                    value={poster.time}
+                    onChange={(e) => onDateChange(poster.date, e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-[#D6D1C7] bg-white text-[#141413] text-xs font-medium focus:outline-none focus:border-[#141413]"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         )}
 
-        {/* TAB 2: TASARIM & TEMA */}
-        {activeTab === 'design' && (
-          <div className="space-y-6 animate-in fade-in duration-200">
-            {/* Color Themes */}
+        {/* STEP 03: BAŞLIK & KİŞİSEL MESAJ */}
+        {activeTab === 'text' && (
+          <div className="space-y-5">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-amber-300 mb-2.5">
-                Poster Renk Teması
+              <label className="block text-xs font-semibold text-[#141413] mb-1.5">
+                Poster Ana Başlığı
               </label>
-              <div className="grid grid-cols-2 gap-2.5">
-                {[
-                  {
-                    id: 'midnight',
-                    label: 'Geceyarısı Laciverti',
-                    desc: 'Klasik Derin Uzay',
-                    bg: 'from-[#040816] to-[#0d1b3d]',
-                    border: 'border-blue-400',
-                  },
-                  {
-                    id: 'obsidian',
-                    label: 'Saf Obsidiyen Siyah',
-                    desc: 'Kristal Yıldızlar',
-                    bg: 'from-[#030305] to-[#121216]',
-                    border: 'border-slate-400',
-                  },
-                  {
-                    id: 'cosmic',
-                    label: 'Kozmik Nebula',
-                    desc: 'Mor & Zümrüt Parıltı',
-                    bg: 'from-[#140b2a] to-[#25103d]',
-                    border: 'border-purple-400',
-                  },
-                  {
-                    id: 'rose',
-                    label: 'Gül Kurusu & Şampanya',
-                    desc: 'Romantik Sıcak Ton',
-                    bg: 'from-[#1d0e1b] to-[#2e172a]',
-                    border: 'border-rose-400',
-                  },
-                  {
-                    id: 'minimal',
-                    label: 'Modern Minimalist',
-                    desc: 'Sade & Zarif Tasarım',
-                    bg: 'from-[#080d1e] to-[#151f3d]',
-                    border: 'border-amber-400',
-                  },
-                ].map((th) => (
+              <input
+                type="text"
+                value={poster.title}
+                onChange={(e) => onChange({ title: e.target.value })}
+                placeholder="Örn: Seni İlk Gördüğüm Gece"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-[#D6D1C7] bg-white text-[#141413] text-sm focus:outline-none focus:border-[#141413] transition"
+              />
+
+              <div className="mt-2.5 flex flex-wrap gap-1.5">
+                {SUGGESTED_TITLES.map((title) => (
                   <button
-                    key={th.id}
+                    key={title}
                     type="button"
-                    onClick={() => onChange({ theme: th.id as PosterTheme })}
-                    className={`p-3 rounded-xl border text-left transition cursor-pointer relative overflow-hidden ${
-                      poster.theme === th.id
-                        ? 'border-amber-400 ring-1 ring-amber-400 shadow-md shadow-amber-400/10'
-                        : 'border-[#1e2a52] hover:border-slate-500'
-                    }`}
+                    onClick={() => onChange({ title })}
+                    className="text-[11px] px-2.5 py-1 rounded-md bg-[#FAF8F5] hover:bg-[#141413] text-[#3F3C38] hover:text-white border border-[#E5E0D5] transition cursor-pointer"
                   >
-                    <div
-                      className={`h-7 rounded-lg bg-gradient-to-r ${th.bg} border border-white/10 mb-2 flex items-center justify-end px-2`}
-                    >
-                      {poster.theme === th.id && (
-                        <Check className="w-4 h-4 text-amber-300 drop-shadow" />
-                      )}
-                    </div>
-                    <div className="font-semibold text-xs text-slate-100">{th.label}</div>
-                    <div className="text-[10px] text-slate-400">{th.desc}</div>
+                    + {title}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Poster Shape / Mask */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-amber-300 mb-2.5">
-                Gökyüzü Çerçeve Şekli
+              <label className="block text-xs font-semibold text-[#141413] mb-1.5">
+                Alt Başlık / Özel İthaf Mesajı
               </label>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { id: 'circle', label: 'Klasik Daire', desc: 'Astrolab Halka' },
-                  { id: 'heart', label: 'Aşk Kalbi', desc: 'Romantik Maske' },
-                  { id: 'full', label: 'Tam Sayfa', desc: 'Kenarsız Kubbe' },
-                ].map((sh) => (
-                  <button
-                    key={sh.id}
-                    type="button"
-                    onClick={() => onChange({ shape: sh.id as PosterShape })}
-                    className={`p-2.5 rounded-xl border text-center transition cursor-pointer ${
-                      poster.shape === sh.id
-                        ? 'bg-amber-400/15 border-amber-400 text-amber-200 font-semibold'
-                        : 'bg-[#0a102c] border-[#1d2a52] text-slate-400 hover:text-slate-200'
-                    }`}
-                  >
-                    <div className="font-medium text-xs mb-0.5">{sh.label}</div>
-                    <div className="text-[10px] text-slate-400">{sh.desc}</div>
-                  </button>
-                ))}
-              </div>
+              <textarea
+                rows={2}
+                value={poster.subtitle}
+                onChange={(e) => onChange({ subtitle: e.target.value })}
+                placeholder="Örn: Yıldızlar senin için parıldıyordu..."
+                className="w-full px-3.5 py-2.5 rounded-lg border border-[#D6D1C7] bg-white text-[#141413] text-sm focus:outline-none focus:border-[#141413] transition resize-none"
+              />
             </div>
 
-            {/* Typography / Fonts */}
+            {/* Font Selection */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-amber-300 mb-2.5">
-                Başlık Tipografisi
+              <label className="block text-xs font-semibold text-[#141413] mb-2">
+                Tipografi Stili
               </label>
               <div className="space-y-2">
                 {[
-                  { id: 'cinzel', name: 'Cinzel', sample: 'ROMA KLASİK YILDIZ HARİTASI', cls: 'font-cinzel' },
-                  { id: 'playfair', name: 'Playfair Display', sample: 'Zarif & Romantik Serif', cls: 'font-playfair' },
-                  { id: 'sans', name: 'Plus Jakarta Sans', sample: 'Modern Minimalist Net Yazı', cls: 'font-sans' },
-                  { id: 'script', name: 'Great Vibes', sample: 'Özel El Yazısı Kaligrafi', cls: 'font-script text-lg' },
+                  {
+                    id: 'cinzel',
+                    name: 'Cinzel Roman',
+                    sample: 'KLASİK GALERİ SERİF',
+                    cls: 'font-cinzel',
+                  },
+                  {
+                    id: 'playfair',
+                    name: 'Playfair Editorial',
+                    sample: 'Zarif Editoryal Başlık',
+                    cls: 'font-playfair',
+                  },
+                  {
+                    id: 'sans',
+                    name: 'Plus Jakarta Modern',
+                    sample: 'MİMARİ MİNİMALİST',
+                    cls: 'font-sans tracking-widest uppercase text-xs',
+                  },
+                  {
+                    id: 'script',
+                    name: 'Great Vibes Kaligrafi',
+                    sample: 'El Yazısı Romantik İthaf',
+                    cls: 'font-script text-lg',
+                  },
                 ].map((f) => (
                   <button
                     key={f.id}
@@ -393,184 +469,149 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({
                     onClick={() => onChange({ font: f.id as PosterFont })}
                     className={`w-full p-3 rounded-xl border text-left transition cursor-pointer flex items-center justify-between ${
                       poster.font === f.id
-                        ? 'bg-amber-400/15 border-amber-400 text-amber-200'
-                        : 'bg-[#0a102c] border-[#1d2a52] text-slate-300 hover:text-slate-100'
+                        ? 'border-[#141413] bg-[#FAF8F5] ring-1 ring-[#141413]'
+                        : 'border-[#E5E0D5] bg-white hover:border-[#B8AFA0]'
                     }`}
                   >
                     <div>
-                      <div className="text-xs font-semibold">{f.name}</div>
-                      <div className={`text-sm text-slate-200 mt-0.5 ${f.cls}`}>
-                        {f.sample}
-                      </div>
+                      <div className="text-[11px] font-medium text-[#6E6A63]">{f.name}</div>
+                      <div className={`text-sm text-[#141413] mt-0.5 ${f.cls}`}>{f.sample}</div>
                     </div>
-                    {poster.font === f.id && <Check className="w-4 h-4 text-amber-300 shrink-0" />}
+                    {poster.font === f.id && <Check className="w-4 h-4 text-[#141413] shrink-0" />}
                   </button>
                 ))}
               </div>
             </div>
+
+            <label className="flex items-center gap-2.5 pt-1 text-xs text-[#3F3C38] cursor-pointer">
+              <input
+                type="checkbox"
+                checked={poster.showCoordinatesText}
+                onChange={(e) => onChange({ showCoordinatesText: e.target.checked })}
+                className="w-4 h-4 rounded border-[#D6D1C7] accent-[#141413]"
+              />
+              <span>Enlem ve boylam koordinatlarını posterin altında göster</span>
+            </label>
           </div>
         )}
 
-        {/* TAB 3: GÖKYÜZÜ KATMANLARI & PARLAKLIK */}
+        {/* STEP 04: GÖKYÜZÜ KATMANLARI & PARLAKLIK */}
         {activeTab === 'sky' && (
-          <div className="space-y-5 animate-in fade-in duration-200">
-            {/* Star Glow & Magnitude */}
-            <div className="p-4 rounded-xl bg-[#09102c] border border-[#1d2b59] space-y-4">
+          <div className="space-y-5">
+            <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#E5E0D5] space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-xs font-semibold text-slate-100 flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-amber-300" /> Yıldız Parlaklık & Işıltı Efekti (Glow)
-                  </span>
-                  <span className="text-[11px] text-slate-400">
-                    Gerçekçi göksel ışıltı aurası ve kırınım parıltısı
-                  </span>
+                  <div className="text-xs font-semibold text-[#141413]">
+                    Spektral Yıldız Işıltısı (Starlight Glow)
+                  </div>
+                  <div className="text-[11px] text-[#6E6A63]">
+                    Parlak yıldızların etrafında gerçekçi ışık halesi
+                  </div>
                 </div>
                 <input
                   type="checkbox"
                   checked={poster.starGlow}
                   onChange={(e) => onChange({ starGlow: e.target.checked })}
-                  className="w-5 h-5 rounded border-[#223163] text-amber-400 focus:ring-0 cursor-pointer"
+                  className="w-4 h-4 rounded accent-[#141413] cursor-pointer"
                 />
               </div>
 
-              {/* Star Magnitude limit */}
               <div>
-                <div className="flex justify-between text-xs text-slate-300 mb-1">
-                  <span>Görünen Yıldız Sayısı / Kadir Sınırı:</span>
-                  <span className="font-mono text-amber-300">{poster.starMagnitude} Mag</span>
+                <div className="flex justify-between text-xs text-[#3F3C38] mb-1.5">
+                  <span>Yıldız Yoğunluğu (Kadir Sınırı)</span>
+                  <span className="font-mono font-semibold text-[#9A7432] tabular-nums">
+                    {poster.starMagnitude} Mag
+                  </span>
                 </div>
                 <input
                   type="range"
-                  min="2"
-                  max="6"
-                  step="0.2"
+                  min="2.5"
+                  max="6.0"
+                  step="0.1"
                   value={poster.starMagnitude}
                   onChange={(e) => onChange({ starMagnitude: parseFloat(e.target.value) })}
-                  className="w-full accent-amber-400 cursor-pointer"
+                  className="w-full accent-[#141413] cursor-pointer"
                 />
-                <div className="flex justify-between text-[10px] text-slate-500 mt-0.5">
-                  <span>Yalnız Parlak Yıldızlar (2.0)</span>
-                  <span>Tüm Gökyüzü Detayı (6.0)</span>
+                <div className="flex justify-between text-[10px] text-[#6E6A63] mt-1">
+                  <span>Sade Gökyüzü (2.5)</span>
+                  <span>Tüm Katalog (6.0)</span>
                 </div>
               </div>
             </div>
 
-            {/* Astronomical Layers Toggles */}
-            <div className="space-y-2.5">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-amber-300 mb-2">
-                Görünür Göksel Katmanlar:
+            <div className="space-y-2">
+              <label className="block text-xs font-semibold text-[#141413] mb-2">
+                Astronomik Katmanlar
               </label>
 
               {[
                 {
                   key: 'showConstellationLines',
                   label: 'Takımyıldızı Çizgileri',
-                  desc: '88 resmi IAU takımyıldız hattı',
+                  desc: '88 resmi IAU takımyıldızı bağlantısı',
                 },
                 {
                   key: 'showConstellationNames',
                   label: 'Takımyıldızı İsimleri',
-                  desc: 'Orion, Büyük Ayı vb. etiketleri',
+                  desc: 'Türkçe astronomik takımyıldız etiketleri',
                 },
                 {
                   key: 'showMilkyWay',
                   label: 'Samanyolu Galaksisi (Milky Way)',
-                  desc: 'Galaktik toz bulutu poligonları',
+                  desc: 'Galaktik toz bulutu kuşağı',
                 },
                 {
                   key: 'showPlanets',
                   label: 'Gezegenler, Güneş ve Ay',
-                  desc: 'Seçili tarihteki anlık astronomik konumları',
+                  desc: 'Seçilen tarihteki gerçek yörünge konumları',
                 },
                 {
                   key: 'showGraticule',
-                  label: 'Koordinat & Ekvator Ağı',
-                  desc: 'Gök küresi ızgara çizgileri',
+                  label: 'Göksel Koordinat Ağı (Graticule)',
+                  desc: 'Sağ açıklık ve dik açıklık meridyenleri',
                 },
               ].map((item) => (
                 <label
                   key={item.key}
-                  className="flex items-center justify-between p-3 rounded-xl bg-[#0a112f] border border-[#1b264e] hover:border-[#27376e] transition cursor-pointer"
+                  className="flex items-center justify-between p-3 rounded-xl bg-white border border-[#E5E0D5] hover:border-[#B8AFA0] transition cursor-pointer"
                 >
                   <div>
-                    <div className="text-xs font-medium text-slate-200">{item.label}</div>
-                    <div className="text-[10px] text-slate-400">{item.desc}</div>
+                    <div className="text-xs font-semibold text-[#141413]">{item.label}</div>
+                    <div className="text-[11px] text-[#6E6A63]">{item.desc}</div>
                   </div>
                   <input
                     type="checkbox"
                     checked={(poster as any)[item.key]}
                     onChange={(e) => onChange({ [item.key]: e.target.checked } as any)}
-                    className="w-4 h-4 rounded border-[#223163] text-amber-400 focus:ring-0 cursor-pointer"
+                    className="w-4 h-4 rounded accent-[#141413] cursor-pointer"
                   />
                 </label>
               ))}
             </div>
           </div>
         )}
-
-        {/* TAB 4: ÇERÇEVE & SİPARİŞ */}
-        {activeTab === 'frame' && (
-          <div className="space-y-6 animate-in fade-in duration-200">
-            {/* Frame Mockups */}
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-amber-300 mb-2.5">
-                Çerçeve Önizlemesi (Mockup):
-              </label>
-              <div className="space-y-2">
-                {[
-                  { id: 'none', label: 'Çerçevesiz Poster', desc: 'Saf sanatsal baskı veya dijital çıktı' },
-                  { id: 'black', label: 'Modern Mat Siyah Ahşap', desc: 'Minimalist şık siyah kenarlık' },
-                  { id: 'oak', label: 'Doğal Meşe Ahşap', desc: 'Sıcak İskandinav doğal ahşap dokusu' },
-                  { id: 'gold', label: 'Lüks Altın Metal', desc: 'Özel hediye altın parıltılı çerçeve' },
-                  { id: 'white', label: 'Beyaz Ahşap Çerçeve', desc: 'Ferah aydınlık modern çerçeve' },
-                ].map((fr) => (
-                  <button
-                    key={fr.id}
-                    type="button"
-                    onClick={() => onChange({ frame: fr.id as PosterFrame })}
-                    className={`w-full p-3 rounded-xl border text-left transition cursor-pointer flex items-center justify-between ${
-                      poster.frame === fr.id
-                        ? 'bg-amber-400/15 border-amber-400 text-amber-200'
-                        : 'bg-[#0a102c] border-[#1d2a52] text-slate-300 hover:text-slate-100'
-                    }`}
-                  >
-                    <div>
-                      <div className="text-xs font-semibold">{fr.label}</div>
-                      <div className="text-[11px] text-slate-400">{fr.desc}</div>
-                    </div>
-                    {poster.frame === fr.id && <Check className="w-4 h-4 text-amber-300" />}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Print sizes & specs */}
-            <div className="p-4 rounded-xl bg-[#09102c] border border-[#1d2b59] text-xs text-slate-300 space-y-2">
-              <div className="font-semibold text-slate-100">Baskı Standartları:</div>
-              <ul className="space-y-1 text-slate-400 list-disc list-inside text-[11px]">
-                <li>A4 (21 x 29.7 cm), A3 (29.7 x 42 cm), 50x70 cm boyutlarına tam uyumlu</li>
-                <li>300 DPI ultra keskin piksel yoğunluğu</li>
-                <li>CMYK baskıya uygun kayıpsız dosya oluşturma</li>
-              </ul>
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Bottom CTA Bar */}
-      <div className="p-4 bg-[#05091b] border-t border-[#19244c]">
+      {/* Contiguous Purchase Module Footer */}
+      <div className="p-5 bg-[#FAF8F5] border-t border-[#E5E0D5]">
+        <div className="flex items-center justify-between text-xs mb-3">
+          <div>
+            <span className="font-semibold text-[#141413]">Dijital Sanat Paketi</span>
+            <span className="text-[#6E6A63] ml-1.5">· 300 DPI PNG + Vektörel SVG</span>
+          </div>
+          <span className="text-base font-bold text-[#141413] tabular-nums">₺250,00</span>
+        </div>
         <button
           type="button"
           onClick={onOpenDownload}
-          className="w-full py-3.5 px-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-sm transition cursor-pointer flex items-center justify-center gap-2 tabular-nums"
+          className="w-full py-3.5 px-5 rounded-xl bg-[#141413] hover:bg-[#292826] text-white font-semibold text-sm transition-colors cursor-pointer flex items-center justify-center gap-2 shadow-sm"
         >
-          <span>Dijital Paketi İndir –</span>
-          <span className="font-black">₺250,00</span>
-          <ChevronRight className="w-4 h-4" />
+          <span>Tasarımı Tamamla & İndir</span>
+          <ArrowRight className="w-4 h-4 text-[#D4AF37]" />
         </button>
-        <p className="text-[11px] text-center text-slate-400 mt-2">
-          Anında dijital teslimat · Vektörel SVG ve 300 DPI PNG dahil
-        </p>
+        <div className="text-[11px] text-center text-[#6E6A63] mt-2">
+          Anında teslimat · Tüm çerçeve boyutlarıyla (A4, A3, 50×70 cm) tam uyumlu
+        </div>
       </div>
     </aside>
   );
