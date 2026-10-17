@@ -463,14 +463,25 @@ Celestial.display = function(config) {
   }
 
   function hexToRgba(c, a) {
-    if (!c || c.charAt(0) !== "#") return c;
-    var r, g, b;
-    if (c.length === 4) {
-      r = parseInt(c[1] + c[1], 16); g = parseInt(c[2] + c[2], 16); b = parseInt(c[3] + c[3], 16);
-    } else if (c.length >= 7) {
-      r = parseInt(c.substr(1, 2), 16); g = parseInt(c.substr(3, 2), 16); b = parseInt(c.substr(5, 2), 16);
-    } else return c;
-    return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+    if (!c) return "rgba(255, 255, 255, " + a + ")";
+    if (typeof c === "string") {
+      if (c.indexOf("rgba") === 0) {
+        return c.replace(/[\d\.]+\)$/, a + ")");
+      }
+      if (c.indexOf("rgb") === 0) {
+        return c.replace("rgb", "rgba").replace(")", ", " + a + ")");
+      }
+      if (c.charAt(0) === "#") {
+        var r = 255, g = 255, b = 255;
+        if (c.length === 4) {
+          r = parseInt(c[1] + c[1], 16); g = parseInt(c[2] + c[2], 16); b = parseInt(c[3] + c[3], 16);
+        } else if (c.length >= 7) {
+          r = parseInt(c.substr(1, 2), 16); g = parseInt(c.substr(3, 2), 16); b = parseInt(c.substr(5, 2), 16);
+        }
+        return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+      }
+    }
+    return "rgba(255, 255, 255, " + a + ")";
   }
 
   function redraw() {  
@@ -589,8 +600,8 @@ Celestial.display = function(config) {
           context.closePath();
           context.fill();
           // Soft luminous halo around brighter stars
-          if (cfg.stars.glow !== false && r >= 1.15) {
-            drawStarGlow(pt, r, context.fillStyle);
+          if (cfg.stars.glow !== false && r >= 1.0) {
+            drawStarGlow(pt, r, starColor(d) || context.fillStyle, d.properties.mag);
           }
           if ((cfg.stars.designation && d.properties.mag <= cfg.stars.designationLimit*adapt) ||
               (cfg.stars.propername && d.properties.mag <= cfg.stars.propernameLimit*adapt)) {
@@ -897,18 +908,35 @@ Celestial.display = function(config) {
   }
 
   // Radial gradient halo to make stars look luminous instead of flat dots
-  function drawStarGlow(pt, r, color) {
-    var g = isNumber(cfg.stars.glowSize) ? cfg.stars.glowSize : 2.6,
-        gr = Math.min(r * g, 40);
-    var grad = context.createRadialGradient(pt[0], pt[1], r * 0.4, pt[0], pt[1], gr);
-    grad.addColorStop(0, hexToRgba(color, 0.5));
-    grad.addColorStop(0.35, hexToRgba(color, 0.2));
+  function drawStarGlow(pt, r, color, mag) {
+    var g = isNumber(cfg.stars.glowSize) ? cfg.stars.glowSize : 3.0,
+        gr = Math.min(r * g, 48);
+    var grad = context.createRadialGradient(pt[0], pt[1], r * 0.25, pt[0], pt[1], gr);
+    grad.addColorStop(0, hexToRgba(color, 0.65));
+    grad.addColorStop(0.25, hexToRgba(color, 0.35));
+    grad.addColorStop(0.65, hexToRgba(color, 0.1));
     grad.addColorStop(1, hexToRgba(color, 0));
     context.fillStyle = grad;
     context.beginPath();
     context.arc(pt[0], pt[1], gr, 0, 2 * Math.PI);
     context.closePath();
     context.fill();
+
+    // Subtle 4-point starlight diffraction spike on the brightest stars (mag < 1.8)
+    if (isNumber(mag) && mag < 1.8 && r >= 2.0) {
+      var spikeLen = Math.min(r * 4.2, 28);
+      context.save();
+      context.strokeStyle = hexToRgba(color, 0.45);
+      context.lineWidth = 0.75;
+      context.beginPath();
+      context.moveTo(pt[0] - spikeLen, pt[1]);
+      context.lineTo(pt[0] + spikeLen, pt[1]);
+      context.moveTo(pt[0], pt[1] - spikeLen);
+      context.lineTo(pt[0], pt[1] + spikeLen);
+      context.stroke();
+      context.restore();
+    }
+
     context.fillStyle = color;
   }
   

@@ -1,0 +1,7 @@
+{
+  "name": "D3-Celestial Gökyüzü Haritası",
+  "description": "Etkileşimli yıldız ve takımyıldızı gökyüzü haritası projeksiyonu ve harita çıktısı alma uygulaması.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
