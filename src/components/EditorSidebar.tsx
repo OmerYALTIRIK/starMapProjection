@@ -74,7 +74,7 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({
   };
 
   return (
-    <aside className="w-full lg:w-[420px] bg-[#070c22]/95 border-l border-[#19234b] flex flex-col h-full shadow-2xl z-30">
+    <aside className="w-full lg:w-[440px] bg-[#070c22] border-t lg:border-t-0 lg:border-l border-[#19234b] flex flex-col lg:h-[780px] z-20 shrink-0">
       {/* Tab Navigation */}
       <div className="grid grid-cols-4 border-b border-[#1b2752] bg-[#05091b] p-1 gap-1">
         {[

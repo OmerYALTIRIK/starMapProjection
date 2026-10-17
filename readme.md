@@ -4,21 +4,18 @@
 
 ---
 
-## 🌟 Canlı Demo & Bağlantılar
+## 🌟 Canlı Demo & Herkese Açık Bağlantı
 
-Uygulamanın çalışan en güncel sürümünü canlı olarak aşağıdaki bağlantılardan deneyimleyebilirsiniz:
+Uygulamanın çalışan en güncel kurumsal mağaza ve canlı harita stüdyosu sürümünü doğrudan aşağıdaki herkese açık bağlantıdan deneyimleyebilirsiniz:
 
-- **Canlı TryCloudflare Demo Bağlantısı:** [https://invisible-jones-locking-guidelines.trycloudflare.com](https://invisible-jones-locking-guidelines.trycloudflare.com)
-- **Paylaşılabilir Canlı Uygulama (Cloud Run):** [https://ais-pre-nsoo3mtakj24q7apzfu4dx-363237614021.europe-west1.run.app](https://ais-pre-nsoo3mtakj24q7apzfu4dx-363237614021.europe-west1.run.app)
-- **Canlı Geliştirme Ortamı:** [https://ais-dev-nsoo3mtakj24q7apzfu4dx-363237614021.europe-west1.run.app](https://ais-dev-nsoo3mtakj24q7apzfu4dx-363237614021.europe-west1.run.app)
-
-*(Not: Vite 6 sunucusu `allowedHosts: true` yapılandırması ile hem Cloudflare Tunnel / trycloudflare hem de Cloud Run domainleri üzerinden kesintisiz erişime açıktır.)*
+- **🌍 Herkese Açık Canlı Satış & Tasarım Stüdyosu (Cloudflare Tunnel):** [https://invisible-jones-locking-guidelines.trycloudflare.com](https://invisible-jones-locking-guidelines.trycloudflare.com)
+- **🛠️ AI Studio Önizleme Ortamı (Oturum Açık Tarayıcı İçin):** [https://ais-dev-nsoo3mtakj24q7apzfu4dx-363237614021.europe-west1.run.app](https://ais-dev-nsoo3mtakj24q7apzfu4dx-363237614021.europe-west1.run.app)
 
 ---
 
-## ✨ İlham Alınan Platformlar & Tasarım Standartları
+## ✨ İlham Alınan Kurumsal E-Ticaret Platformları & Mimari
 
-Bu proje, dünyanın önde gelen kişiselleştirilmiş yıldız posteri e-ticaret platformlarından ilham alarak modernleştirilmiştir:
+Bu proje, dünyanın önde gelen kişiselleştirilmiş yıldız posteri satış platformlarından ilham alınarak tam kapsamlı bir **Kurumsal E-Ticaret Mağazası + Canlı Harita Tasarım Stüdyosu** olarak yeniden inşa edilmiştir:
 * [The Night Sky](https://www.thenightsky.com/)
 * [Maps for Moments](https://mapsformoments.co.uk/)
 * [Starry Maps](https://starrymaps.com/)

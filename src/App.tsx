@@ -4,6 +4,7 @@ import { PosterPreview } from './components/PosterPreview';
 import { EditorSidebar } from './components/EditorSidebar';
 import { PaywallModal } from './components/PaywallModal';
 import { AdvancedAstronomyModal } from './components/AdvancedAstronomyModal';
+import { CorporateSections } from './components/CorporateSections';
 import { PosterData } from './types';
 
 declare global {
@@ -12,6 +13,49 @@ declare global {
     d3?: any;
   }
 }
+
+const OCCASION_PRESETS = [
+  {
+    label: 'İlk Tanışma & Aşk',
+    preset: {
+      title: 'Seni İlk Gördüğüm Gece',
+      subtitle: 'Yıldızlar senin için parıldıyordu...',
+      theme: 'midnight' as const,
+      shape: 'circle' as const,
+      font: 'cinzel' as const,
+    },
+  },
+  {
+    label: 'Evlilik Teklifi & Yıldönümü',
+    preset: {
+      title: 'Evet Dediğim An',
+      subtitle: 'Kalplerimizin ve yıldızların buluştuğu gece',
+      theme: 'rose' as const,
+      shape: 'heart' as const,
+      font: 'script' as const,
+    },
+  },
+  {
+    label: 'Doğum Günü & Bebek',
+    preset: {
+      title: 'Dünyaya Gözlerini Açtığın Gece',
+      subtitle: 'Hoş geldin küçük yıldızımız',
+      theme: 'obsidian' as const,
+      shape: 'circle' as const,
+      font: 'playfair' as const,
+    },
+  },
+  {
+    label: 'Kozmik Galeri',
+    preset: {
+      title: 'Yıldızların Altında',
+      subtitle: 'Sonsuz evrende bizim hikayemiz',
+      theme: 'cosmic' as const,
+      shape: 'full' as const,
+      font: 'sans' as const,
+    },
+  },
+];
 
 export default function App() {
   const [poster, setPoster] = useState<PosterData>({
@@ -199,7 +243,6 @@ export default function App() {
     poster.theme,
   ]);
 
-  // Handle Location changes (rotate star sphere)
   const handleLocationChange = (lat: number, lng: number, name: string) => {
     setPoster((prev) => ({ ...prev, lat, lng, locationName: name }));
     if (window.Celestial && window.Celestial.rotate) {
@@ -211,7 +254,6 @@ export default function App() {
     }
   };
 
-  // Handle Date/Time changes
   const handleDateChange = (date: string, time: string) => {
     setPoster((prev) => ({ ...prev, date, time }));
     if (window.Celestial && window.Celestial.date) {
@@ -274,34 +316,78 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-[#040816] text-[#e8ecf8]">
-      {/* Top Navigation */}
+    <div className="min-h-screen flex flex-col bg-[#040816] text-[#e8ecf8]">
+      {/* Top Corporate Navigation */}
       <Header
         onOpenAstronomy={() => setIsAstronomyOpen(true)}
         onOpenDownload={() => setIsDownloadOpen(true)}
-        currentShape={poster.shape}
-        onSelectShape={(shape) => setPoster((prev) => ({ ...prev, shape }))}
         isPaid={isPaid}
       />
 
-      {/* Main Studio Viewport (Left Preview, Right Editor) */}
-      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
-        <PosterPreview
-          poster={poster}
-          onZoomIn={handleZoomIn}
-          onZoomOut={handleZoomOut}
-        />
+      {/* HERO + FRONT-AND-CENTER INTERACTIVE STAR MAP STUDIO */}
+      <section id="tasarla" className="pt-8 pb-14 lg:pt-12 lg:pb-20 px-4 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Editorial Hero Lead-In */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
+            <div>
+              <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 mb-2.5">
+                <span className="text-amber-300 font-medium">ESA Hipparcos Yıldız Kataloğu</span>
+                <span aria-hidden="true">·</span>
+                <span>300 DPI Baskı PNG + Vektörel SVG</span>
+                <span aria-hidden="true">·</span>
+                <span className="tabular-nums">48.900+ Teslim Edilen Harita</span>
+              </div>
+              <h1 className="font-cinzel text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-100 tracking-tight max-w-3xl">
+                En Özel Anınızın Gökyüzünü Tasarlayın
+              </h1>
+            </div>
 
-        <EditorSidebar
-          poster={poster}
-          onChange={(up) => setPoster((prev) => ({ ...prev, ...up }))}
-          onLocationChange={handleLocationChange}
-          onDateChange={handleDateChange}
-          onOpenDownload={() => setIsDownloadOpen(true)}
-        />
-      </main>
+            {/* Quick Occasion Presets */}
+            <div className="flex flex-wrap items-center gap-1.5 bg-[#080f28] p-1.5 rounded-xl border border-[#192653]">
+              {OCCASION_PRESETS.map((oc) => (
+                <button
+                  key={oc.label}
+                  type="button"
+                  onClick={() => setPoster((prev) => ({ ...prev, ...oc.preset }))}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer whitespace-nowrap shrink-0 ${
+                    poster.title === oc.preset.title
+                      ? 'bg-amber-400 text-slate-950 font-semibold'
+                      : 'text-slate-300 hover:text-white hover:bg-[#101c42]'
+                  }`}
+                >
+                  {oc.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
-      {/* Paywall & Download Modal */}
+          {/* Main 2-Column Live Configurator Box */}
+          <div className="rounded-2xl bg-[#060b1d] border border-[#1a2754] shadow-2xl overflow-hidden flex flex-col lg:flex-row items-stretch">
+            <PosterPreview
+              poster={poster}
+              onZoomIn={handleZoomIn}
+              onZoomOut={handleZoomOut}
+            />
+
+            <EditorSidebar
+              poster={poster}
+              onChange={(up) => setPoster((prev) => ({ ...prev, ...up }))}
+              onLocationChange={handleLocationChange}
+              onDateChange={handleDateChange}
+              onOpenDownload={() => setIsDownloadOpen(true)}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Corporate E-Commerce Sections (Collections, Bento Capabilities, Testimonials, FAQ, Footer) */}
+      <CorporateSections
+        onApplyPreset={(preset) => setPoster((prev) => ({ ...prev, ...preset }))}
+        onOpenDownload={() => setIsDownloadOpen(true)}
+        onOpenAstronomy={() => setIsAstronomyOpen(true)}
+      />
+
+      {/* Paywall & Download Modal (250 TL PNG + SVG) */}
       <PaywallModal
         isOpen={isDownloadOpen}
         onClose={() => setIsDownloadOpen(false)}

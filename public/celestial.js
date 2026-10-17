@@ -5518,10 +5518,17 @@ d3.svg.customSymbol = function() {
 
 var exportCallback = null;
 
-Celestial.exportSVG = function(callback) {
-  if (!callback) return;
-  exportCallback = callback;
-  exportSVG();
+Celestial.exportSVG = function(arg) {
+  if (typeof arg === "function") {
+    exportCallback = arg;
+    exportSVG();
+  } else if (typeof arg === "string") {
+    exportCallback = null;
+    exportSVG(arg);
+  } else {
+    exportCallback = null;
+    exportSVG("gokyuzu-haritasi.svg");
+  }
 };
 var datetimepicker = function(cfg, callback) {
   var date = new Date(), 
